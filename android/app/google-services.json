@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "1061766343415",
+    "project_id": "manggatect-admin",
+    "storage_bucket": "manggatect-admin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061766343415:android:87d8046106d6b8467c81f2",
+        "android_client_info": {
+          "package_name": "com.example.adminmangga"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_3iIEqT3sKL9eFG-_U3VLpiP-tsiZrjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061766343415:android:0c7935b5a381107d7c81f2",
+        "android_client_info": {
+          "package_name": "com.example.manggatectv1august"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_3iIEqT3sKL9eFG-_U3VLpiP-tsiZrjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061766343415:android:99182357d9c719ae7c81f2",
+        "android_client_info": {
+          "package_name": "com.example.manggatectv2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_3iIEqT3sKL9eFG-_U3VLpiP-tsiZrjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
