@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manggatectv2/services/firestore.dart';
 import '../../services/app_designs.dart';
-import '../classify/classifypage.dart';
+import '../treetagging/classify_page.dart';
 
 class QRResultPage extends StatefulWidget {
   final String qrResult;
@@ -63,13 +63,19 @@ class _QRResultPageState extends State<QRResultPage> {
     if (docData != null) {
       print('Document Data: $docData'); // Debug print
       if (docData!['stage'] == null || docData!['stage'] == 'No data yet') {
-        // Navigate to classify page
+        // Retrieve latitude and longitude from docData
+        String latitude = docData!['latitude'] ?? '';
+        String longitude = docData!['longitude'] ?? '';
+
+        // Navigate to classify page with latitude and longitude
         print('Navigating to Classify Page'); // Debug print
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                ClassifyPage(), // Directly navigate to ClassifyPage
+            builder: (context) => ClassifyPage(
+              latitude: latitude,
+              longitude: longitude,
+            ),
           ),
         );
       } else {

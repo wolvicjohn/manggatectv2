@@ -5,10 +5,9 @@ import 'dart:io';
 class FirestoreService {
   final CollectionReference notes =
       FirebaseFirestore.instance.collection('notes');
-  final FirebaseStorage storage =
-      FirebaseStorage.instance; // Firebase Storage instance
+  final FirebaseStorage storage = FirebaseStorage.instance; // Firebase Storage instance
 
-  // Create
+  // Create a note
   Future<String> addNote({
     required String longitude,
     required String latitude,
@@ -66,6 +65,7 @@ class FirestoreService {
     return snapshot.docs.length; // Return the count of documents
   }
 
+  // Upload image to Firebase Storage
   Future<String> uploadImage(File image) async {
     try {
       Reference ref = storage
@@ -85,12 +85,12 @@ class FirestoreService {
     }
   }
 
-  // Read
+  // Read notes
   Stream<QuerySnapshot> getNoteStream() {
     return notes.orderBy('timestamp', descending: true).snapshots();
   }
 
-  // Update
+  // Update an existing note
   Future<void> updateNote({
     required String docID,
     required String title,
@@ -103,14 +103,13 @@ class FirestoreService {
       'title': title,
       'longitude': longitude,
       'latitude': latitude,
-      if (imageUrl != null)
-        'imageUrl': imageUrl, // Update image URL if provided
+      if (imageUrl != null) 'imageUrl': imageUrl, // Update image URL if provided
       if (stage != null) 'stage': stage, // Update stage if provided
       'timestamp': Timestamp.now(),
     });
   }
 
-  // Delete
+  // Delete a note
   Future<void> deleteNote(String docID) {
     return notes.doc(docID).delete();
   }

@@ -1,35 +1,90 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:manggatectv2/services/firestore.dart';
 import '../../services/app_designs.dart';
-import 'classifyresult.dart';
+import '../treetagging/classify_page.dart';
 
-class ClassifyPage extends StatefulWidget {
-  final String docID;
+class QRResultPage extends StatefulWidget {
+  final String qrResult;
 
-  const ClassifyPage({required this.docID, Key? key}) : super(key: key);
+  const QRResultPage({super.key, required this.qrResult});
 
   @override
-  _ClassifyPageState createState() => _ClassifyPageState();
+  State<QRResultPage> createState() => _QRResultPageState();
 }
 
-class _ClassifyPageState extends State<ClassifyPage> {
-  final ImagePicker _picker = ImagePicker();
+class _QRResultPageState extends State<QRResultPage> {
+  final FirestoreService firestoreService = FirestoreService();
+  Map<String, dynamic>? docData; // Store the document data
+  bool isLoading = true; // Track loading state
+  String errorMessage = '';
 
-  Future<void> _pickImage(ImageSource source) async {
-    final XFile? pickedFile = await _picker.pickImage(source: source);
-    if (pickedFile != null) {
-      File image = File(pickedFile.path);
-      print("Image picked: ${image.path}, Size: ${await image.length()} bytes");
-      Navigator.push(
+  @override
+  void initState() {
+    super.initState();
+    _fetchDocData();
+  }
+
+  Future<void> _fetchDocData() async {
+    try {
+      // Attempt to retrieve the document using the scanned QR code as the docID
+      final data = await firestoreService.getNoteById(widget.qrResult);
+
+      if (data.isNotEmpty) {
+        setState(() {
+          docData = data;
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = 'No data found for this QR code.';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error fetching data: $e';
+        isLoading = false;
+      });
+    }
+  }
+
+  /// Method to handle navigation to Classify or Update page
+  void _navigateToPage(String routeName) {
+    if (docData != null) {
+      Navigator.pushNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => ClassifyResultPage(
-            image: image,
-            docID: widget.docID, // Pass the docID to ClassifyResultPage
-          ),
-        ),
+        routeName,
+        arguments: docData, // Pass the document data as arguments
       );
+    }
+  }
+
+  void _handleClassifyOrUpdate() {
+    if (docData != null) {
+      print('Document Data: $docData'); // Debug print
+      if (docData!['stage'] == null || docData!['stage'] == 'No data yet') {
+        // Retrieve latitude, longitude, and docID from docData
+        String latitude = docData!['latitude'] ?? '';
+        String longitude = docData!['longitude'] ?? '';
+        String docID = widget.qrResult; // Use the qrResult as docID
+
+        // Navigate to classify page with latitude, longitude, and docID
+        print('Navigating to Classify Page'); // Debug print
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ClassifyPage(
+              
+              latitude: latitude,
+              longitude: longitude,
+            ),
+          ),
+        );
+      } else {
+        // Navigate to update page
+        print('Navigating to Update Page'); // Debug print
+        _navigateToPage('/update');
+      }
     }
   }
 
@@ -37,34 +92,71 @@ class _ClassifyPageState extends State<ClassifyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Classify Image',
-          style: AppDesigns.titleTextStyle,
-        ),
+        title: const Text('QR Code Result'),
         backgroundColor: AppDesigns.primaryColor,
-        elevation: 4, // Adjust elevation for a subtle shadow
-        centerTitle: true, // Center the title
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/camera.png', // Replace with your asset image path
-              height: 300,
-              fit: BoxFit.cover,
-            ),
-            AppDesigns.customButton(
-              title: 'Pick from Gallery',
-              onPressed: () => _pickImage(ImageSource.gallery),
-            ),
-            const SizedBox(height: 20),
-            AppDesigns.customButton(
-              title: 'Capture from Camera',
-              onPressed: () => _pickImage(ImageSource.camera),
-            ),
-          ],
-        ),
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : errorMessage.isNotEmpty
+                ? Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.red, fontSize: 16),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Tree Data:',
+                          style: AppDesigns.titleTextStyle2,
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16.0),
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          decoration: BoxDecoration(
+                            color: AppDesigns.backgroundColor,
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 4.0,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            'Title: ${docData!['title']}\n'
+                            'Longitude: ${docData!['longitude']}\n'
+                            'Latitude: ${docData!['latitude']}\n'
+                            'Stage: ${docData!['stage'] ?? 'No data yet'}',
+                            textAlign: TextAlign.center,
+                            style: AppDesigns.labelTextStyle,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        AppDesigns.customButton(
+                          title: docData != null &&
+                                  (docData!['stage'] == null ||
+                                      docData!['stage'] == 'No data yet')
+                              ? 'Classify'
+                              : 'Update',
+                          onPressed: () {
+                            print('Button Pressed');
+                            _handleClassifyOrUpdate();
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        AppDesigns.customButton(
+                          title: 'Back to Scanner',
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
       ),
     );
   }
