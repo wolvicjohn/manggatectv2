@@ -8,17 +8,13 @@ import '../home_page.dart';
 
 class ConfirmPage extends StatefulWidget {
   final File stageImage;
-  final File image;
-  final String latitude;
-  final String longitude;
+  final String docID;
 
-  ConfirmPage({
-    Key? key,
-    required this.image,
-    required this.latitude,
-    required this.longitude,
+  const ConfirmPage({
+    super.key,
     required this.stageImage,
-  }) : super(key: key);
+    required this.docID,
+  });
 
   @override
   _ConfirmPageState createState() => _ConfirmPageState();
@@ -34,13 +30,11 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
   final Map<String, String> _descriptions = {
     'stage-1':
-        'Budding phase: During this phase, the tree begins to form flower buds. As these buds mature, they enlarge and adopt a red hue. The duration of this stage can vary for weeks, contingent on the mango type.',
-    'stage-2':
-        'Flowers blossom during the growth stage. The petals typically exhibit white or light yellow colors. This phase generally persists for a handful of days.',
-    'stage-3':
-        'Complete bloom stage: Blossoms cover the tree, and the flowers open fully, but this stage lasts only a day or two.',
+        'Budding phase: During this phase, the tree begins to form flower buds...',
+    'stage-2': 'Flowers blossom during the growth stage...',
+    'stage-3': 'Complete bloom stage: Blossoms cover the tree...',
     'stage-4':
-        'Fruit setting stage: This is the stage when the flowers turn into small mangos. The mangos can take several weeks to reach their full growth stage and become ready for harvest.',
+        'Fruit setting stage: This is when the flowers turn into small mangos...',
   };
 
   @override
@@ -162,27 +156,22 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
   Future<void> _saveStageToFirestore() async {
     if (_isSaving) return;
-    // Show confirmation dialog before saving
     bool shouldSave = await _showSaveConfirmationDialog();
 
-    if (!shouldSave) {
-      return;
-    }
+    if (!shouldSave) return;
 
     setState(() {
       _isSaving = true;
     });
 
     FirestoreService firestoreService = FirestoreService();
-    if (_stage != null) {
+
+    if (_stage != null && widget.docID.isNotEmpty) {
       try {
-        await firestoreService.addNote(
-          longitude: widget.longitude,
-          latitude: widget.latitude,
-          image: widget.image,
-          stageImage: widget.stageImage,
-          stage: _stage,
-          isArchived: false,
+        await firestoreService.updateStage(
+          docID: widget.docID, // Pass docID here
+          stage: _stage!,
+          stageImage: widget.stageImage, // Pass the image file
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Stage saved successfully!')),
@@ -245,7 +234,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
           elevation: 4,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Image.file(widget.image),
+            child: Image.file(widget.stageImage),
           ),
         ),
         const SizedBox(height: 20),

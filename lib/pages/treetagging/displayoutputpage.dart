@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/pages/treetagging/image_pick.dart';
 import 'dart:io';
 import '../../services/app_designs.dart';
 import '../../services/firestore.dart';
-import 'classify_page.dart';
 
 class DisplayOutputPage extends StatefulWidget {
-  final File? image;
+  final File image;
   final String location;
 
   const DisplayOutputPage({
@@ -36,24 +38,22 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
 
     try {
       setState(() {
-        _isLoading = true; // Show loading indicator
+        _isLoading = true; // Show loading indicator while saving
       });
 
-      // Ask user if they want to classify the tree now
-      bool? classifyNow = await showDialog<bool>(
+      // Show save confirmation dialog
+      bool? saveNow = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor:
-                AppDesigns.backgroundColor, // Custom background color
+            backgroundColor: AppDesigns.backgroundColor,
             content: const Column(
-              mainAxisSize: MainAxisSize.min, // Adjust size to content
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Do you want to classify this tree now?\nNote: This is optional',
-                  style: TextStyle(fontSize: 16), // Custom content text size
-                  textAlign:
-                      TextAlign.center, // Center align for better aesthetics
+                Text(
+                  'Do you want to save this?',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -62,14 +62,14 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
                 onPressed: () => Navigator.of(context).pop(false),
                 child: const Text(
                   'No',
-                  style: AppDesigns.labelTextStyle, // Custom button text style
+                  style: AppDesigns.labelTextStyle,
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 child: const Text(
                   'Yes',
-                  style: AppDesigns.labelTextStyle, // Custom button text style
+                  style: AppDesigns.labelTextStyle,
                 ),
               ),
             ],
@@ -77,16 +77,44 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
         },
       );
 
-      // Save the note with image and location to Firestore
-      await firestoreService.addNote(
-        longitude: longitude,
-        latitude: latitude,
-        image: widget.image!, // Ensure image is not null
-      );
+      if (saveNow == false) {
+        return; // If user selects 'No', exit without saving
+      }
 
-      // Show a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tree saved successfully!')),
+      // Ask user if they want to classify the tree now
+      bool? classifyNow = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: AppDesigns.backgroundColor,
+            content: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Do you want to classify this tree now?\nNote: This is optional',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text(
+                  'No',
+                  style: AppDesigns.labelTextStyle,
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text(
+                  'Yes',
+                  style: AppDesigns.labelTextStyle,
+                ),
+              ),
+            ],
+          );
+        },
       );
 
       // If user confirms to classify, navigate to ClassifyPage
@@ -94,21 +122,36 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ClassifyPage(
-                    latitude: latitude,
-                    longitude: longitude,
-                  )),
+            builder: (context) => ClassifyPage(
+              latitude: latitude,
+              longitude: longitude,
+              image: widget.image,
+            ),
+          ),
+        );
+      } else if (classifyNow == false) {
+        // Save the note with image and location to Firestore
+        await firestoreService.addNote(
+          longitude: longitude,
+          latitude: latitude,
+          image: widget.image,
+          stageImage: null,
+          isArchived: false,
+        );
+
+        // Show a success message if saved
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tree saved successfully!')),
         );
       }
     } catch (e) {
-      print('Error saving note: $e');
-      // Show error message
+      log('Error saving note: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving note: $e')),
       );
     } finally {
       setState(() {
-        _isLoading = false; // Hide loading indicator
+        _isLoading = false; // Hide loading indicator after completion
       });
     }
   }
@@ -121,36 +164,32 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Tag a Tree',
-          style: AppDesigns.titleTextStyle,
-        ),
+        title: Text('Tag a Tree', style: AppDesigns.titleTextStyle),
         backgroundColor: AppDesigns.primaryColor,
         elevation: 4,
         centerTitle: true,
       ),
-      body: Center(
-        child: _isLoading // Show loading indicator while saving
-            ? const CircularProgressIndicator()
-            : Padding(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Center(
+              child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Image with border radius
-                    widget.image != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.file(
-                              widget.image!,
-                              height: 400,
-                              width: 400,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : const Text('No image selected'),
+                    // Image display
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.file(
+                        widget.image,
+                        height: 300,
+                        width: 300,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     const SizedBox(height: 20),
-                    // Display latitude and longitude with styling in a Container
+                    // Location display inside a container
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16.0),
@@ -188,8 +227,8 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 100),
-                    // Use the custom button from AppDesigns
+                    const SizedBox(height: 40),
+                    // Custom Save button
                     AppDesigns.customButton(
                       title: 'Save',
                       onPressed: saveNote,
@@ -197,6 +236,22 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
                   ],
                 ),
               ),
+            ),
+          ),
+          // Show loading indicator if _isLoading is true
+          if (_isLoading)
+            Opacity(
+              opacity: 0.5, // Background opacity
+              child: ModalBarrier(
+                dismissible: false,
+                color: Colors.black.withOpacity(0.5),
+              ),
+            ),
+          if (_isLoading) // Show CircularProgressIndicator
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }

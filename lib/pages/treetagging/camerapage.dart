@@ -14,7 +14,7 @@ class ImagePickerPage extends StatefulWidget {
 
 class _ImagePickerPageState extends State<ImagePickerPage> {
   final ImagePicker _picker = ImagePicker(); // Initialize image picker
-  File? _selectedImage; // Store the selected image
+  late File _selectedImage; // Store the selected image
 
   // Function to capture an image using the camera
   Future<void> _captureImageWithCamera() async {

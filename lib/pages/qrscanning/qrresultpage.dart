@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/pages/qrscanning/image_pick.dart';
 import 'package:manggatectv2/services/firestore.dart';
 import '../../services/app_designs.dart';
-import '../treetagging/classify_page.dart';
 
 class QRResultPage extends StatefulWidget {
   final String qrResult;
@@ -48,41 +48,16 @@ class _QRResultPageState extends State<QRResultPage> {
     }
   }
 
-  /// Method to handle navigation to Classify or Update page
-  void _navigateToPage(String routeName) {
+  /// Method to navigate to the Classify page
+  void _navigateToClassifyPage() {
     if (docData != null) {
-      Navigator.pushNamed(
+      String docID = widget.qrResult;
+      Navigator.push(
         context,
-        routeName,
-        arguments: docData, // Pass the document data as arguments
+        MaterialPageRoute(
+          builder: (context) => ImagePickPage(docID: docID), 
+        ),
       );
-    }
-  }
-
-  void _handleClassifyOrUpdate() {
-    if (docData != null) {
-      print('Document Data: $docData'); // Debug print
-      if (docData!['stage'] == null || docData!['stage'] == 'No data yet') {
-        // Retrieve latitude and longitude from docData
-        String latitude = docData!['latitude'] ?? '';
-        String longitude = docData!['longitude'] ?? '';
-
-        // Navigate to classify page with latitude and longitude
-        print('Navigating to Classify Page'); // Debug print
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ClassifyPage(
-              latitude: latitude,
-              longitude: longitude,
-            ),
-          ),
-        );
-      } else {
-        // Navigate to update page
-        print('Navigating to Update Page'); // Debug print
-        _navigateToPage('/update');
-      }
     }
   }
 
@@ -127,7 +102,7 @@ class _QRResultPageState extends State<QRResultPage> {
                             ],
                           ),
                           child: Text(
-                            'Title: ${docData!['title']}\n'
+                            'DocID: ${widget.qrResult}\n'
                             'Longitude: ${docData!['longitude']}\n'
                             'Latitude: ${docData!['latitude']}\n'
                             'Stage: ${docData!['stage'] ?? 'No data yet'}',
@@ -137,15 +112,8 @@ class _QRResultPageState extends State<QRResultPage> {
                         ),
                         const SizedBox(height: 20),
                         AppDesigns.customButton(
-                          title: docData != null &&
-                                  (docData!['stage'] == null ||
-                                      docData!['stage'] == 'No data yet')
-                              ? 'Classify'
-                              : 'Update',
-                          onPressed: () {
-                            print('Button Pressed');
-                            _handleClassifyOrUpdate();
-                          },
+                          title: 'Classify',
+                          onPressed: _navigateToClassifyPage, // Always navigate to classify page
                         ),
                         const SizedBox(height: 20),
                         AppDesigns.customButton(

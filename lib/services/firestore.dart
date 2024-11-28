@@ -5,64 +5,81 @@ import 'dart:io';
 class FirestoreService {
   final CollectionReference notes =
       FirebaseFirestore.instance.collection('notes');
-  final FirebaseStorage storage = FirebaseStorage.instance; // Firebase Storage instance
+  final FirebaseStorage storage = FirebaseStorage.instance;
 
   // Create a note
   Future<String> addNote({
     required String longitude,
     required String latitude,
     required File image,
-    String? stage, // Change to String
+    String? stage,
+    required stageImage,
+    required bool isArchived, 
   }) async {
     try {
       print(
           'Attempting to save note with Longitude: $longitude, Latitude: $latitude');
 
-      // Upload image to Firebase Storage
+      // Upload main image to Firebase Storage
       String imageUrl = await uploadImage(image);
 
-      // Get the current count of notes to increment the title
-      int noteCount = await getNotesCount();
-      String title = 'Tagged-Tree ${noteCount + 1}';
+      // Upload stage image if provided
+      String? stageImageUrl;
+      if (stageImage != null) {
+        stageImageUrl = await uploadImage(stageImage);
+      }
 
       // Add note to Firestore
       DocumentReference docRef = await notes.add({
-        'title': title,
         'longitude': longitude,
         'latitude': latitude,
-        'imageUrl': imageUrl, // Store image URL
+        'imageUrl': imageUrl,
         'stage': stage ?? 'No data yet',
+        'stageImageUrl': stageImageUrl, 
         'timestamp': Timestamp.now(),
+        'isArchived': false,
       });
+
+      print('Note added with ID: ${docRef.id}');
       return docRef.id; // Return the document ID
     } catch (e) {
       print('Error adding data: $e');
-      rethrow; // Re-throw the error to be handled by the caller
+      rethrow;
     }
   }
 
-  // Method to update the stage for an existing note
+  // Method to update the stage and its image URL
   Future<void> updateStage({
     required String docID,
-    required String stage, // Stage to update or add
+    required String stage, 
+    File? stageImage,
   }) async {
     try {
       print('Updating stage for note ID: $docID to $stage');
+
+      // Upload new stage image if provided
+      String? stageImageUrl;
+      if (stageImage != null) {
+        stageImageUrl = await uploadImage(stageImage);
+      }
+
+      // Update note in Firestore
       await notes.doc(docID).update({
         'stage': stage, // Update the stage field
+        if (stageImageUrl != null) 'stageImageUrl': stageImageUrl,
         'timestamp': Timestamp.now(), // Optionally update the timestamp
       });
       print('Stage updated successfully!');
     } catch (e) {
       print('Error updating stage: $e');
-      rethrow; // Re-throw the error to be handled by the caller
+      rethrow;
     }
   }
 
   // Function to get the count of existing notes
   Future<int> getNotesCount() async {
     QuerySnapshot snapshot = await notes.get();
-    return snapshot.docs.length; // Return the count of documents
+    return snapshot.docs.length;
   }
 
   // Upload image to Firebase Storage
@@ -93,18 +110,18 @@ class FirestoreService {
   // Update an existing note
   Future<void> updateNote({
     required String docID,
-    required String title,
     required String longitude,
     required String latitude,
     String? imageUrl, // Optional image URL for updates
     String? stage, // Optional stage for updates
+    String? stageImageUrl, // Optional stage image URL for updates
   }) {
     return notes.doc(docID).update({
-      'title': title,
       'longitude': longitude,
       'latitude': latitude,
       if (imageUrl != null) 'imageUrl': imageUrl, // Update image URL if provided
       if (stage != null) 'stage': stage, // Update stage if provided
+      if (stageImageUrl != null) 'stageImageUrl': stageImageUrl, // Update stage image URL
       'timestamp': Timestamp.now(),
     });
   }

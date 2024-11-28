@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class AppDesigns {
   // Common Colors
-  static const Color primaryColor = Color(0xFF4CAF50); // Green
-  static const Color accentColor = Color(0xFF81C784); // Light Green
-  static const Color backgroundColor = Color(0xFFF5F5F5); // Light Grey
+  static const Color primaryColor = Color.fromARGB(255, 20, 116, 82);
+  static const Color accentColor = Color.fromARGB(255, 20, 116, 82);
+  static const Color backgroundColor = Color(0xFFF5F5F5);
 
   // Text Styles
   static TextStyle titleTextStyle = const TextStyle(
@@ -18,7 +18,7 @@ class AppDesigns {
     color: Colors.black,
   );
   static TextStyle titleTextStyle3 = const TextStyle(
-    fontSize: 50,
+    fontSize: 40,
     fontWeight: FontWeight.bold,
     color: Color.fromARGB(255, 104, 74, 45),
   );
@@ -43,32 +43,35 @@ class AppDesigns {
   static const TextStyle headline6 = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.bold,
-    color: Colors.black, // Set color to black
+    color: Colors.black,
   );
 
   static const TextStyle bodyText2 = TextStyle(
     fontSize: 14,
-    color: Colors.black, // Set color to black
+    color: Colors.black,
   );
 
   // Reusable Button Widget
   static Widget customButton({
     required String title,
     required VoidCallback onPressed,
+    bool isLoading = false, // Add this parameter
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 16.0), // Adjust horizontal padding
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed, // Disable button when loading
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         ),
         child: SizedBox(
-          width: double.infinity, // Make the button stretch to full width
+          width: double.infinity,
           child: Center(
-            child: Text(title, style: buttonTextStyle),
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    color: primaryColor) // Show loading spinner
+                : Text(title, style: buttonTextStyle),
           ),
         ),
       ),

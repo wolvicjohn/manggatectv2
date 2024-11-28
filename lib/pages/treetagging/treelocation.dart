@@ -5,7 +5,7 @@ import 'displayoutputpage.dart';
 import 'dart:io';
 
 class TreeLocationPage extends StatefulWidget {
-  final File? image; // Store the captured image
+  final File image; 
 
   const TreeLocationPage({Key? key, required this.image}) : super(key: key);
 
@@ -15,7 +15,7 @@ class TreeLocationPage extends StatefulWidget {
 
 class _TreeLocationPageState extends State<TreeLocationPage> {
   String _locationMessage = '';
-  bool _isLocationFetched = false; // Track if the location has been fetched
+  bool _isLocationFetched = false; 
 
   // Function to get the current location
   Future<void> _getCurrentLocation() async {
