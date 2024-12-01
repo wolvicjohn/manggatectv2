@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/pages/home_page.dart';
 import 'package:manggatectv2/pages/treetagging/image_pick.dart';
+import 'package:manggatectv2/utility/custom_page_transition.dart';
 import 'dart:io';
 import '../../services/app_designs.dart';
 import '../../services/firestore.dart';
@@ -28,8 +30,8 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
     return widget.location.split(', ').map((e) => e.split(': ')[1]).toList();
   }
 
-  // Function to save the note to Firestore
-  Future<void> saveNote() async {
+  // Function to save the mango_tree to Firestore
+  Future<void> savemango_tree() async {
     List<String> latLon = parseLocation();
     String latitude = latLon[0];
     String longitude = latLon[1];
@@ -42,43 +44,22 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
       });
 
       // Show save confirmation dialog
+      // Show save confirmation dialog
       bool? saveNow = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: AppDesigns.backgroundColor,
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Do you want to save this?',
-                  style: TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text(
-                  'No',
-                  style: AppDesigns.labelTextStyle,
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text(
-                  'Yes',
-                  style: AppDesigns.labelTextStyle,
-                ),
-              ),
-            ],
+          return AppDesigns.customDialog(
+            context: context,
+            title: 'Do you want to save this?',
+            content: '',
+            onYes: () => Navigator.of(context).pop(true),
+            onNo: () => Navigator.of(context).pop(false),
           );
         },
       );
 
       if (saveNow == false) {
-        return; // If user selects 'No', exit without saving
+        return;
       }
 
       // Ask user if they want to classify the tree now
@@ -87,12 +68,15 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: AppDesigns.backgroundColor,
-            content: const Column(
+            content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Do you want to classify this tree now?\nNote: This is optional',
-                  style: TextStyle(fontSize: 16),
+                  'Do you want to classify this tree now?\n',
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors
+                          .black), // You can modify the text color here if necessary
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -100,14 +84,14 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text(
+                child: Text(
                   'No',
                   style: AppDesigns.labelTextStyle,
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text(
+                child: Text(
                   'Yes',
                   style: AppDesigns.labelTextStyle,
                 ),
@@ -121,8 +105,8 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
       if (classifyNow == true) {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => ClassifyPage(
+          CustomPageTransition(
+            page: ClassifyPage(
               latitude: latitude,
               longitude: longitude,
               image: widget.image,
@@ -130,8 +114,8 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
           ),
         );
       } else if (classifyNow == false) {
-        // Save the note with image and location to Firestore
-        await firestoreService.addNote(
+        // Save the mango_tree with image and location to Firestore
+        await firestoreService.addmango_tree(
           longitude: longitude,
           latitude: latitude,
           image: widget.image,
@@ -145,14 +129,18 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
         );
       }
     } catch (e) {
-      log('Error saving note: $e');
+      log('Error saving mango_tree: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving note: $e')),
+        SnackBar(content: Text('Error saving mango_tree: $e')),
       );
     } finally {
       setState(() {
         _isLoading = false; // Hide loading indicator after completion
       });
+      Navigator.pushReplacement(
+        context,
+        CustomPageTransition(page: const Homepage()),
+      );
     }
   }
 
@@ -231,7 +219,7 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
                     // Custom Save button
                     AppDesigns.customButton(
                       title: 'Save',
-                      onPressed: saveNote,
+                      onPressed: savemango_tree,
                     ),
                   ],
                 ),
@@ -241,15 +229,15 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
           // Show loading indicator if _isLoading is true
           if (_isLoading)
             Opacity(
-              opacity: 0.5, // Background opacity
+              opacity: 0.5,
               child: ModalBarrier(
                 dismissible: false,
                 color: Colors.black.withOpacity(0.5),
               ),
             ),
-          if (_isLoading) // Show CircularProgressIndicator
-            const Center(
-              child: CircularProgressIndicator(),
+          if (_isLoading)
+            Center(
+              child: AppDesigns.loadingIndicator(),
             ),
         ],
       ),

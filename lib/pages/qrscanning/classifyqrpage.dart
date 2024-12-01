@@ -29,6 +29,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
   bool _isSaving = false;
 
   final Map<String, String> _descriptions = {
+    'Invalid':'Invalid Image, try again',
     'stage-1':
         'Budding phase: During this phase, the tree begins to form flower buds...',
     'stage-2': 'Flowers blossom during the growth stage...',
@@ -308,7 +309,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
         AppDesigns.customButton(
           title: "Tag a Tree",
           onPressed: _saveStageToFirestore,
-          isLoading: _isSaving, // Pass isLoading state
+          isLoading: _isSaving,
         ),
       ],
     );

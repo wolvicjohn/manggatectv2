@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../../services/app_designs.dart';
 import 'camerapage.dart';
 
@@ -71,9 +72,7 @@ class TreeTaggingPage extends StatelessWidget {
                 // Navigate to the ImagePickerPage when the "Continue" button is pressed
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const ImagePickerPage(),
-                  ),
+                  CustomPageTransition(page: const ImagePickerPage()),
                 );
               },
             ),

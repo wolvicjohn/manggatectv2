@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manggatectv2/pages/qrscanning/image_pick.dart';
 import 'package:manggatectv2/services/firestore.dart';
+import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../../services/app_designs.dart';
 
 class QRResultPage extends StatefulWidget {
@@ -14,8 +15,8 @@ class QRResultPage extends StatefulWidget {
 
 class _QRResultPageState extends State<QRResultPage> {
   final FirestoreService firestoreService = FirestoreService();
-  Map<String, dynamic>? docData; // Store the document data
-  bool isLoading = true; // Track loading state
+  Map<String, dynamic>? docData;
+  bool isLoading = true;
   String errorMessage = '';
 
   @override
@@ -27,7 +28,7 @@ class _QRResultPageState extends State<QRResultPage> {
   Future<void> _fetchDocData() async {
     try {
       // Attempt to retrieve the document using the scanned QR code as the docID
-      final data = await firestoreService.getNoteById(widget.qrResult);
+      final data = await firestoreService.getmango_treeById(widget.qrResult);
 
       if (data.isNotEmpty) {
         setState(() {
@@ -54,8 +55,8 @@ class _QRResultPageState extends State<QRResultPage> {
       String docID = widget.qrResult;
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ImagePickPage(docID: docID), 
+        CustomPageTransition(
+          page: ImagePickPage(docID: docID),
         ),
       );
     }
@@ -113,7 +114,7 @@ class _QRResultPageState extends State<QRResultPage> {
                         const SizedBox(height: 20),
                         AppDesigns.customButton(
                           title: 'Classify',
-                          onPressed: _navigateToClassifyPage, // Always navigate to classify page
+                          onPressed: _navigateToClassifyPage,
                         ),
                         const SizedBox(height: 20),
                         AppDesigns.customButton(

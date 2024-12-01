@@ -2,23 +2,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
+import 'package:manggatectv2/utility/DeviceIdentifier.dart';
+
 class FirestoreService {
-  final CollectionReference notes =
-      FirebaseFirestore.instance.collection('notes');
+  final CollectionReference mango_tree =
+      FirebaseFirestore.instance.collection('mango_tree');
   final FirebaseStorage storage = FirebaseStorage.instance;
 
-  // Create a note
-  Future<String> addNote({
+  // Create a mango_tree
+  Future<String> addmango_tree({
     required String longitude,
     required String latitude,
     required File image,
     String? stage,
     required stageImage,
-    required bool isArchived, 
+    required bool isArchived,
   }) async {
     try {
       print(
-          'Attempting to save note with Longitude: $longitude, Latitude: $latitude');
+          'Attempting to save mango_tree with Longitude: $longitude, Latitude: $latitude');
+
+      String deviceId = await DeviceIdentifier.getDeviceId();
 
       // Upload main image to Firebase Storage
       String imageUrl = await uploadImage(image);
@@ -29,18 +33,19 @@ class FirestoreService {
         stageImageUrl = await uploadImage(stageImage);
       }
 
-      // Add note to Firestore
-      DocumentReference docRef = await notes.add({
+      // Add mango_tree to Firestore
+      DocumentReference docRef = await mango_tree.add({
         'longitude': longitude,
         'latitude': latitude,
         'imageUrl': imageUrl,
         'stage': stage ?? 'No data yet',
-        'stageImageUrl': stageImageUrl, 
+        'stageImageUrl': stageImageUrl,
         'timestamp': Timestamp.now(),
         'isArchived': false,
+        'deviceId': deviceId,
       });
 
-      print('Note added with ID: ${docRef.id}');
+      print('mango_tree added with ID: ${docRef.id}');
       return docRef.id; // Return the document ID
     } catch (e) {
       print('Error adding data: $e');
@@ -51,11 +56,11 @@ class FirestoreService {
   // Method to update the stage and its image URL
   Future<void> updateStage({
     required String docID,
-    required String stage, 
+    required String stage,
     File? stageImage,
   }) async {
     try {
-      print('Updating stage for note ID: $docID to $stage');
+      print('Updating stage for mango_tree ID: $docID to $stage');
 
       // Upload new stage image if provided
       String? stageImageUrl;
@@ -63,8 +68,8 @@ class FirestoreService {
         stageImageUrl = await uploadImage(stageImage);
       }
 
-      // Update note in Firestore
-      await notes.doc(docID).update({
+      // Update mango_tree in Firestore
+      await mango_tree.doc(docID).update({
         'stage': stage, // Update the stage field
         if (stageImageUrl != null) 'stageImageUrl': stageImageUrl,
         'timestamp': Timestamp.now(), // Optionally update the timestamp
@@ -76,9 +81,25 @@ class FirestoreService {
     }
   }
 
-  // Function to get the count of existing notes
-  Future<int> getNotesCount() async {
-    QuerySnapshot snapshot = await notes.get();
+  // get user history
+  Stream<List<Map<String, dynamic>>> getAllMangoTrees() async* {
+    String deviceId = await DeviceIdentifier.getDeviceId();
+
+    yield* mango_tree.where('deviceId', isEqualTo: deviceId).snapshots().map(
+      (querySnapshot) {
+        return querySnapshot.docs.map((doc) {
+          return {
+            'id': doc.id,
+            ...doc.data() as Map<String, dynamic>,
+          };
+        }).toList();
+      },
+    );
+  }
+
+  // Function to get the count of existing mango_tree
+  Future<int> getmango_treeCount() async {
+    QuerySnapshot snapshot = await mango_tree.get();
     return snapshot.docs.length;
   }
 
@@ -102,13 +123,13 @@ class FirestoreService {
     }
   }
 
-  // Read notes
-  Stream<QuerySnapshot> getNoteStream() {
-    return notes.orderBy('timestamp', descending: true).snapshots();
+  // Read mango_tree
+  Stream<QuerySnapshot> getmango_treetream() {
+    return mango_tree.orderBy('timestamp', descending: true).snapshots();
   }
 
-  // Update an existing note
-  Future<void> updateNote({
+  // Update an existing mango_tree
+  Future<void> updatemango_tree({
     required String docID,
     required String longitude,
     required String latitude,
@@ -116,24 +137,21 @@ class FirestoreService {
     String? stage, // Optional stage for updates
     String? stageImageUrl, // Optional stage image URL for updates
   }) {
-    return notes.doc(docID).update({
+    return mango_tree.doc(docID).update({
       'longitude': longitude,
       'latitude': latitude,
-      if (imageUrl != null) 'imageUrl': imageUrl, // Update image URL if provided
+      if (imageUrl != null)
+        'imageUrl': imageUrl, // Update image URL if provided
       if (stage != null) 'stage': stage, // Update stage if provided
-      if (stageImageUrl != null) 'stageImageUrl': stageImageUrl, // Update stage image URL
+      if (stageImageUrl != null)
+        'stageImageUrl': stageImageUrl, // Update stage image URL
       'timestamp': Timestamp.now(),
     });
   }
 
-  // Delete a note
-  Future<void> deleteNote(String docID) {
-    return notes.doc(docID).delete();
-  }
-
-  // Get a specific note by ID
-  Future<Map<String, dynamic>> getNoteById(String docID) async {
-    DocumentSnapshot doc = await notes.doc(docID).get();
+  // Get a specific mango_tree by ID
+  Future<Map<String, dynamic>> getmango_treeById(String docID) async {
+    DocumentSnapshot doc = await mango_tree.doc(docID).get();
     return doc.data() as Map<String, dynamic>;
   }
 }

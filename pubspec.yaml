@@ -33,10 +33,29 @@ dependencies:
   image: ^3.0.1
   path_provider: ^2.0.11
   tflite_flutter: ^0.11.0
+  device_info_plus: ^11.1.1
+  shared_preferences: ^2.3.3
+  intl: ^0.20.1
+  flutter_local_notifications: ^18.0.1
+  flutter_launcher_icons: ^0.11.0
+  flutter_animated_loadingkit: ^0.0.7
+  flutter_spinkit: ^5.2.1
+  flutter_native_splash: ^2.2.16
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: true
+  image_path: "assets/mango.png"
+  adaptive_icon_background: "#147452"
+  adaptive_icon_foreground: "assets/logo_foreground.png"
+
+flutter_native_splash:
+  color: "#147452"   
+  image: "assets/logo_foreground.png"  
+  android: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

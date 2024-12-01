@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/utility/custom_page_transition.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'qrresultpage.dart';
@@ -13,7 +14,7 @@ class QRScannerPage extends StatefulWidget {
 class _QRScannerPageState extends State<QRScannerPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
-  bool isScanned = false; 
+  bool isScanned = false;
 
   @override
   void initState() {
@@ -55,8 +56,8 @@ class _QRScannerPageState extends State<QRScannerPage> {
         // Navigate to the QRResultPage with the scanned QR code
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => QRResultPage(qrResult: scanData.code!),
+          CustomPageTransition(
+            page: QRResultPage(qrResult: scanData.code!),
           ),
         );
       }

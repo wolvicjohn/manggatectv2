@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:manggatectv2/pages/qrscanning/classifyqrpage.dart';
+import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../../services/app_designs.dart';
 
 class ImagePickPage extends StatefulWidget {
@@ -29,8 +30,8 @@ class _ImagePickPageState extends State<ImagePickPage> {
       // Navigate to ConfirmPage with the selected image, latitude, and longitude
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ConfirmPage(
+        CustomPageTransition(
+          page: ConfirmPage(
             docID: widget.docID,
             stageImage: stageImage,
           ),

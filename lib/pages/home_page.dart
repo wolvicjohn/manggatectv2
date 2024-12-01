@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/pages/history/historypage.dart';
 import 'package:manggatectv2/pages/qrscanning/qrscannerpage.dart';
 import 'package:manggatectv2/services/firestore.dart';
+import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../services/app_designs.dart';
-import 'classify(dont_include)/classifypage.dart';
 import 'treetagging/treetaggingpage.dart';
 
 class Homepage extends StatefulWidget {
@@ -20,6 +21,34 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Hides the back button
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.info_outline,
+              color: AppDesigns.primaryColor,
+            ),
+            tooltip: 'Information',
+            onPressed: () {
+              // Show a dialog or perform an action
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Information'),
+                    content: const Text('This is an information dialog.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -33,7 +62,7 @@ class _HomepageState extends State<Homepage> {
                 fit: BoxFit.cover,
               ),
               Text(
-                'MANGGATECT',
+                'MANGGATECH',
                 style: AppDesigns.titleTextStyle3,
                 textAlign: TextAlign.center,
               ),
@@ -43,23 +72,32 @@ class _HomepageState extends State<Homepage> {
               AppDesigns.customButton(
                 title: "Scan QR Code",
                 onPressed: () {
-                  // Add navigation to QR code scanner page
+                  // Use the custom page transition
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const QRScannerPage()),
+                    CustomPageTransition(page: const QRScannerPage()),
                   );
                 },
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 5),
               AppDesigns.customButton(
                 title: "Tag a Tree",
                 onPressed: () {
-                  // Navigate to TreeTaggingPage
+                  // Use the custom page transition
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const TreeTaggingPage()),
+                    CustomPageTransition(page: const TreeTaggingPage()),
+                  );
+                },
+              ),
+              const SizedBox(height: 5),
+              AppDesigns.customButton(
+                title: "History",
+                onPressed: () {
+                  // Use the custom page transition
+                  Navigator.push(
+                    context,
+                    BottomSlidePageTransition(page: const HistoryPage()),
                   );
                 },
               ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../../services/app_designs.dart';
 import 'displayoutputpage.dart';
 import 'dart:io';
 
 class TreeLocationPage extends StatefulWidget {
-  final File image; 
+  final File image;
 
   const TreeLocationPage({Key? key, required this.image}) : super(key: key);
 
@@ -15,10 +16,15 @@ class TreeLocationPage extends StatefulWidget {
 
 class _TreeLocationPageState extends State<TreeLocationPage> {
   String _locationMessage = '';
-  bool _isLocationFetched = false; 
+  bool _isLocationFetched = false;
+  bool _isLoading = false; // To track loading state
 
   // Function to get the current location
   Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
     try {
       // Check for location permission
       LocationPermission permission = await Geolocator.checkPermission();
@@ -28,13 +34,18 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
 
       if (permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always) {
+        // Use LocationSettings for current position retrieval
         Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
+          locationSettings: LocationSettings(
+            accuracy: LocationAccuracy.best,
+            distanceFilter: 10, // Update every 10 meters
+          ),
+        );
         setState(() {
           _locationMessage =
               'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
           _isLocationFetched =
-              true; // Update state to indicate location is fetched
+              true; // Update state to indicate location fetched
         });
       } else {
         setState(() {
@@ -49,6 +60,10 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
         _isLocationFetched =
             false; // Update state since location fetching failed
       });
+    } finally {
+      setState(() {
+        _isLoading = false; // Stop loading
+      });
     }
   }
 
@@ -58,27 +73,24 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
       appBar: AppBar(
         title: Text(
           'Get Tree Location',
-          style: AppDesigns
-              .titleTextStyle, // Use the title text style from AppDesigns
+          style: AppDesigns.titleTextStyle,
         ),
-        backgroundColor:
-            AppDesigns.primaryColor, // Use your primary color from AppDesigns
-        elevation: 4, // Adjust elevation for a subtle shadow
-        centerTitle: true, // Center the title
+        backgroundColor: AppDesigns.primaryColor,
+        elevation: 4,
+        centerTitle: true,
       ),
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0), // Add padding around the column
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/traveler.png', // Replace with your image path
-                width: 200, // Optional: set the width
-                height: 200, // Optional: set the height
-                fit: BoxFit
-                    .cover, // Optional: adjust how the image should be fitted
+                'assets/traveler.png',
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
               ),
               const SizedBox(height: 30),
               const Text(
@@ -87,53 +99,47 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              AppDesigns.customButton(
-                // Use custom button
-                title: 'Get Location',
-                onPressed: _getCurrentLocation,
-              ),
+              if (_isLoading)
+                AppDesigns.loadingIndicator() // Show loading indicator
+              else
+                AppDesigns.customButton(
+                  title: 'Get Location',
+                  onPressed: _getCurrentLocation,
+                ),
               const SizedBox(height: 20),
-              // Conditionally render the location message and Continue button together
               if (_isLocationFetched) ...[
                 Container(
-                  width: double
-                      .infinity, // Stretch the container to fill the available width
-                  padding: const EdgeInsets.all(
-                      16.0), // Padding inside the container
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: AppDesigns.backgroundColor, // Set background color
-                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    color: AppDesigns.backgroundColor,
+                    borderRadius: BorderRadius.circular(10),
                     boxShadow: const [
                       BoxShadow(
-                        color: Colors.black26, // Shadow color
-                        blurRadius: 4.0, // Shadow blur
-                        offset: Offset(0, 2), // Shadow position
+                        color: Colors.black26,
+                        blurRadius: 4.0,
+                        offset: Offset(0, 2),
                       ),
                     ],
                   ),
                   child: Column(
-                    mainAxisSize:
-                        MainAxisSize.min, // Use min size for the column
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         _locationMessage,
-                        style: AppDesigns
-                            .locationTextStyle, // Use location text style
+                        style: AppDesigns.locationTextStyle,
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(
-                          height: 10), // Space between text and button
+                      const SizedBox(height: 10),
                       AppDesigns.customButton(
-                        // Use custom button
                         title: 'Continue',
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => DisplayOutputPage(
+                            PopTransition(
+                              page: DisplayOutputPage(
                                 image: widget.image,
-                                location:
-                                    _locationMessage, // Pass the location here
+                                location: _locationMessage,
                               ),
                             ),
                           );
