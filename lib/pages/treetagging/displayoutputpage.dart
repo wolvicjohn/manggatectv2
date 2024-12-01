@@ -44,7 +44,6 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
       });
 
       // Show save confirmation dialog
-      // Show save confirmation dialog
       bool? saveNow = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
@@ -73,10 +72,7 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
               children: [
                 Text(
                   'Do you want to classify this tree now?\n',
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: Colors
-                          .black), // You can modify the text color here if necessary
+                  style: TextStyle(fontSize: 16, color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -127,6 +123,10 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Tree saved successfully!')),
         );
+        Navigator.pushReplacement(
+          context,
+          CustomPageTransition(page: const Homepage()),
+        );
       }
     } catch (e) {
       log('Error saving mango_tree: $e');
@@ -137,10 +137,6 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
       setState(() {
         _isLoading = false; // Hide loading indicator after completion
       });
-      Navigator.pushReplacement(
-        context,
-        CustomPageTransition(page: const Homepage()),
-      );
     }
   }
 

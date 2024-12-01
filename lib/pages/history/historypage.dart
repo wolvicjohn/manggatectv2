@@ -86,8 +86,8 @@ class _HistoryPageState extends State<HistoryPage>
                   shadowColor: Colors.black.withOpacity(0.2),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(10.0),
-                    leading: item['imageUrl'] != null
-                        ? Image.network(item['imageUrl'],
+                    leading: item['stageImageUrl'] != null
+                        ? Image.network(item['stageImageUrl'],
                             width: 50, height: 50, fit: BoxFit.cover)
                         : const Icon(Icons.image_not_supported),
                     title: Text(

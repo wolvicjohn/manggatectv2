@@ -251,7 +251,6 @@ class _ResultPageState extends State<ResultPage> {
       appBar: AppBar(),
       body: _isSaving
           ? Container(
-              color: AppDesigns.primaryColor,
               child: Center(child: AppDesigns.loadingIndicator()),
             ) // Show loading indicator
           : SingleChildScrollView(

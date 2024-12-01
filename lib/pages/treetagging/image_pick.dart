@@ -23,19 +23,12 @@ class ClassifyPage extends StatefulWidget {
 
 class _ClassifyPageState extends State<ClassifyPage> {
   final ImagePicker _picker = ImagePicker();
-  bool _isLoading = false;
+  bool _isLoading = false; // Track loading state
 
   // Function to pick an image from gallery or camera
   Future<void> _pickImage(ImageSource source) async {
     setState(() {
       _isLoading = true; // Show loading indicator
-    });
-
-    // Simulate a delay with loading indicator
-    await Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        _isLoading = false; // Hide loading indicator after delay
-      });
     });
 
     final XFile? pickedFile = await _picker.pickImage(source: source);
@@ -59,58 +52,36 @@ class _ClassifyPageState extends State<ClassifyPage> {
     }
 
     setState(() {
-      _isLoading = false; // Hide loading indicator after image is picked
+      _isLoading = false; // Hide loading indicator once image is processed
     });
-  }
-
-  // Function to show modal with image pick options
-  void _showImagePickerModal() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pick an Image'),
-          content: _isLoading
-              ? AppDesigns.loadingIndicator() // Show loading indicator
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AppDesigns.customButton(
-                      title: 'Pick from Gallery',
-                      onPressed: () => _pickImage(ImageSource.gallery),
-                    ),
-                    const SizedBox(height: 20),
-                    AppDesigns.customButton(
-                      title: 'Capture from Camera',
-                      onPressed: () => _pickImage(ImageSource.camera),
-                    ),
-                  ],
-                ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the modal
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Image'),
-        backgroundColor: AppDesigns.primaryColor,
+        title: const Text('Classify Image'),
+        backgroundColor: AppDesigns.primaryColor, 
       ),
       body: Center(
-        child: AppDesigns.customButton(
-          title: 'Select Image',
-          onPressed: _showImagePickerModal, // Show modal on button press
-        ),
+        child: _isLoading
+            ? AppDesigns.loadingIndicator()
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Button to pick image from the gallery
+                  AppDesigns.customButton(
+                    title: 'Pick from Gallery',
+                    onPressed: () => _pickImage(ImageSource.gallery),
+                  ),
+                  const SizedBox(height: 20),
+                  // Button to capture image from the camera
+                  AppDesigns.customButton(
+                    title: 'Capture from Camera',
+                    onPressed: () => _pickImage(ImageSource.camera),
+                  ),
+                ],
+              ),
       ),
     );
   }
