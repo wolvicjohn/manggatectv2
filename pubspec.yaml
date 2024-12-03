@@ -41,6 +41,9 @@ dependencies:
   flutter_animated_loadingkit: ^0.0.7
   flutter_spinkit: ^5.2.1
   flutter_native_splash: ^2.2.16
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -84,6 +87,7 @@ flutter:
     - assets/traveler.png
     - assets/book.png
     - assets/mango.png
+    - assets/tree_icon.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

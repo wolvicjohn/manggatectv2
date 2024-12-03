@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:manggatectv2/pages/qrscanning/image_pick.dart';
 import 'package:manggatectv2/services/firestore.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../services/app_designs.dart';
 
 class QRResultPage extends StatefulWidget {
@@ -102,13 +104,54 @@ class _QRResultPageState extends State<QRResultPage> {
                               ),
                             ],
                           ),
-                          child: Text(
-                            'DocID: ${widget.qrResult}\n'
-                            'Longitude: ${docData!['longitude']}\n'
-                            'Latitude: ${docData!['latitude']}\n'
-                            'Stage: ${docData!['stage'] ?? 'No data yet'}',
-                            textAlign: TextAlign.center,
-                            style: AppDesigns.labelTextStyle,
+                          child: Column(
+                            children: [
+                              Text(
+                                'DocID: ${widget.qrResult}\n'
+                                'Longitude: ${docData!['longitude']}\n'
+                                'Latitude: ${docData!['latitude']}\n'
+                                'Stage: ${docData!['stage'] ?? 'No data yet'}',
+                                textAlign: TextAlign.center,
+                                style: AppDesigns.labelTextStyle,
+                              ),
+                              const SizedBox(height: 20),
+                              // FlutterMap implementation
+                              SizedBox(
+                                height: 200, // Adjust the height as necessary
+                                child: FlutterMap(
+                                  options: MapOptions(
+                                    initialCenter: LatLng(
+                                      double.parse(docData!['latitude']),
+                                      double.parse(docData!['longitude']),
+                                    ),
+                                    initialZoom:17,
+                                  ),
+                                  children: [
+                                    TileLayer(
+                                      urlTemplate:
+                                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                    ),
+                                    MarkerLayer(
+                                      markers: [
+                                        Marker(
+                                          point: LatLng(
+                                            double.parse(docData!['latitude']),
+                                            double.parse(docData!['longitude']),
+                                          ),
+                                          width: 50.0,
+                                          height: 50.0,
+                                          child: Image.asset(
+                                            'assets/tree_icon.png',
+                                            width: 40.0,
+                                            height: 40.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 20),
