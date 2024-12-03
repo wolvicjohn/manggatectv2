@@ -46,7 +46,7 @@ class FirestoreService {
       });
 
       print('mango_tree added with ID: ${docRef.id}');
-      return docRef.id; // Return the document ID
+      return docRef.id;
     } catch (e) {
       print('Error adding data: $e');
       rethrow;
