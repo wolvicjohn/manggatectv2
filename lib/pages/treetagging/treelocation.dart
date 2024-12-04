@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../../services/app_designs.dart';
-import 'displayoutputpage.dart';
+import 'distplaytreeimage.dart';
 import 'dart:io';
 
 class TreeLocationPage extends StatefulWidget {

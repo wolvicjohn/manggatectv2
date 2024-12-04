@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:manggatectv2/pages/treetagging/ResultPage.dart';
+import 'package:manggatectv2/pages/treetagging/classifyResultPage.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../../services/app_designs.dart';
 

@@ -46,9 +46,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
   Future<void> _loadModelAndLabels() async {
     try {
-      _interpreter = await Interpreter.fromAsset('assets/model.tflite');
+      _interpreter = await Interpreter.fromAsset('assets/model.tflite'); // load the algo model
       final labelsData =
-          await DefaultAssetBundle.of(context).loadString('assets/labels.txt');
+          await DefaultAssetBundle.of(context).loadString('assets/labels.txt'); //load and process labels
       _labels = labelsData
           .split('\n')
           .map((e) => e.trim())
@@ -56,25 +56,25 @@ class _ConfirmPageState extends State<ConfirmPage> {
           .toList();
 
       if (_labels.isEmpty) {
-        throw Exception("Labels file is empty or not found!");
+        throw Exception("Labels file is empty or not found!"); //if no labels are found, throw exception
       }
 
       await _classifyImage();
     } catch (e) {
-      _handleError("Error loading model and labels: $e");
+      _handleError("Error loading model and labels: $e"); //error handling
     }
   }
 
   img.Image _preprocessImage(File stageImage) {
-    final originalImage = img.decodeImage(stageImage.readAsBytesSync())!;
-    return img.copyResize(originalImage, width: 224, height: 224);
+    final originalImage = img.decodeImage(stageImage.readAsBytesSync())!;  //decode the image
+    return img.copyResize(originalImage, width: 224, height: 224); //resize the image into 224 x 224
   }
 
-  List<List<List<List<double>>>> _imageToInputTensor(img.Image image) {
-    return List.generate(1, (_) {
-      return List.generate(224, (y) {
-        return List.generate(224, (x) {
-          final pixel = image.getPixel(x, y);
+  List<List<List<List<double>>>> _imageToInputTensor(img.Image image) { //generate tensor structure 
+    return List.generate(1, (_) {  // batch size 1 image
+      return List.generate(224, (y) { //width
+        return List.generate(224, (x) { // height
+          final pixel = image.getPixel(x, y); // RGB values
           return [
             img.getRed(pixel) / 255.0,
             img.getGreen(pixel) / 255.0,
@@ -90,14 +90,14 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
     try {
       final inputTensor =
-          _imageToInputTensor(_preprocessImage(widget.stageImage));
+          _imageToInputTensor(_preprocessImage(widget.stageImage)); // Preprocess the image and convert to required tensor format
       final outputTensor =
-          List.filled(_labels.length, 0.0).reshape([1, _labels.length]);
+          List.filled(_labels.length, 0.0).reshape([1, _labels.length]);  // create empty list to store the classification results
 
-      _interpreter.run(inputTensor, outputTensor);
+      _interpreter.run(inputTensor, outputTensor); // run inference
 
-      final output = outputTensor[0].cast<double>();
-      double maxScore = output[0];
+      final output = outputTensor[0].cast<double>(); // the models output is parsed to find the label with the highest confidence score(maxscore)
+      double maxScore = output[0]; 
       int labelIndex = 0;
 
       for (int i = 1; i < output.length; i++) {
@@ -109,11 +109,11 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
       setState(() {
         _result =
-            "Label: ${_labels[labelIndex]}\nConfidence: ${(maxScore * 100).toStringAsFixed(2)}%";
+            "CLassified as: ${_labels[labelIndex]}";  
         _stage = _labels[labelIndex];
       });
     } catch (e) {
-      _handleError("Error during image classification: $e");
+      _handleError("Error during image classification: $e"); // catch error
     } finally {
       setState(() => _loading = false);
     }
@@ -138,13 +138,13 @@ class _ConfirmPageState extends State<ConfirmPage> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context, false); // Return false if "Cancel"
+                    Navigator.pop(context, false); 
                   },
                   child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context, true); // Return true if "Yes"
+                    Navigator.pop(context, true); 
                   },
                   child: const Text('Yes'),
                 ),
@@ -152,7 +152,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
             );
           },
         ) ??
-        false; // Default to false if dialog is dismissed
+        false;
   }
 
   Future<void> _saveStageToFirestore() async {
@@ -170,9 +170,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
     if (_stage != null && widget.docID.isNotEmpty) {
       try {
         await firestoreService.updateStage(
-          docID: widget.docID, // Pass docID here
+          docID: widget.docID,
           stage: _stage!,
-          stageImage: widget.stageImage, // Pass the image file
+          stageImage: widget.stageImage, 
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Stage saved successfully!')),
@@ -211,7 +211,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Confirm Image', style: AppDesigns.titleTextStyle),
+        title: Text('Image Result', style: AppDesigns.titleTextStyle),
         backgroundColor: AppDesigns.primaryColor,
         elevation: 4,
         centerTitle: true,
@@ -307,7 +307,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
           ),
         const SizedBox(height: 20),
         AppDesigns.customButton(
-          title: "Tag a Tree",
+          title: "Save",
           onPressed: _saveStageToFirestore,
           isLoading: _isSaving,
         ),

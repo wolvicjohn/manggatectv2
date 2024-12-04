@@ -29,7 +29,7 @@ class _QRResultPageState extends State<QRResultPage> {
 
   Future<void> _fetchDocData() async {
     try {
-      // Attempt to retrieve the document using the scanned QR code as the docID
+      // Attempt to retrieve the mango_tree using the scanned QR code as the docID
       final data = await firestoreService.getmango_treeById(widget.qrResult);
 
       if (data.isNotEmpty) {
@@ -66,107 +66,118 @@ class _QRResultPageState extends State<QRResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    String? ImageUrl = docData?['imageUrl'];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Code Result'),
         backgroundColor: AppDesigns.primaryColor,
       ),
-      body: Center(
-        child: isLoading
-            ? const CircularProgressIndicator()
-            : errorMessage.isNotEmpty
-                ? Text(
-                    errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 16),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Tree Data:',
-                          style: AppDesigns.titleTextStyle2,
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16.0),
-                          margin: const EdgeInsets.symmetric(vertical: 8.0),
-                          decoration: BoxDecoration(
-                            color: AppDesigns.backgroundColor,
-                            borderRadius: BorderRadius.circular(10.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 4.0,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: isLoading
+              ? AppDesigns.loadingIndicator()
+              : errorMessage.isNotEmpty
+                  ? Text(
+                      errorMessage,
+                      style: const TextStyle(color: Colors.red, fontSize: 16),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Tree Data:',
+                            style: AppDesigns.titleTextStyle2,
                           ),
-                          child: Column(
-                            children: [
-                              Text(
-                                'DocID: ${widget.qrResult}\n'
-                                'Longitude: ${docData!['longitude']}\n'
-                                'Latitude: ${docData!['latitude']}\n'
-                                'Stage: ${docData!['stage'] ?? 'No data yet'}',
-                                textAlign: TextAlign.center,
-                                style: AppDesigns.labelTextStyle,
-                              ),
-                              const SizedBox(height: 20),
-                              // FlutterMap implementation
-                              SizedBox(
-                                height: 200, // Adjust the height as necessary
-                                child: FlutterMap(
-                                  options: MapOptions(
-                                    initialCenter: LatLng(
-                                      double.parse(docData!['latitude']),
-                                      double.parse(docData!['longitude']),
-                                    ),
-                                    initialZoom:17,
-                                  ),
-                                  children: [
-                                    TileLayer(
-                                      urlTemplate:
-                                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                    ),
-                                    MarkerLayer(
-                                      markers: [
-                                        Marker(
-                                          point: LatLng(
-                                            double.parse(docData!['latitude']),
-                                            double.parse(docData!['longitude']),
-                                          ),
-                                          width: 50.0,
-                                          height: 50.0,
-                                          child: Image.asset(
-                                            'assets/tree_icon.png',
-                                            width: 40.0,
-                                            height: 40.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                          const SizedBox(height: 10),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16.0),
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            decoration: BoxDecoration(
+                              color: AppDesigns.backgroundColor,
+                              borderRadius: BorderRadius.circular(10.0),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 4.0,
+                                  offset: Offset(0, 2),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Image.network(ImageUrl!),
+                                Divider(
+                                  color: Colors.grey,
+                                ),
+                                Text(
+                                  'ID: ${widget.qrResult}\n'
+                                  'Stage: ${docData!['stage'] ?? 'No data yet'}',
+                                  textAlign: TextAlign.center,
+                                  style: AppDesigns.labelTextStyle,
+                                ),
+                                Divider(
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(height: 20),
+                                // FlutterMap implementation
+                                SizedBox(
+                                  height: 200,
+                                  child: FlutterMap(
+                                    options: MapOptions(
+                                      initialCenter: LatLng(
+                                        double.parse(docData!['latitude']),
+                                        double.parse(docData!['longitude']),
+                                      ),
+                                      initialZoom: 15,
+                                    ),
+                                    children: [
+                                      TileLayer(
+                                        urlTemplate:
+                                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                      ),
+                                      MarkerLayer(
+                                        markers: [
+                                          Marker(
+                                            point: LatLng(
+                                              double.parse(
+                                                  docData!['latitude']),
+                                              double.parse(
+                                                  docData!['longitude']),
+                                            ),
+                                            width: 50.0,
+                                            height: 50.0,
+                                            child: Image.asset(
+                                              'assets/tree_icon.png',
+                                              width: 40.0,
+                                              height: 40.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        AppDesigns.customButton(
-                          title: 'Classify',
-                          onPressed: _navigateToClassifyPage,
-                        ),
-                        const SizedBox(height: 20),
-                        AppDesigns.customButton(
-                          title: 'Back to Scanner',
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
+                          const SizedBox(height: 20),
+                          AppDesigns.customButton(
+                            title: 'Classify',
+                            onPressed: _navigateToClassifyPage,
+                          ),
+                          const SizedBox(height: 10),
+                          AppDesigns.customButton(
+                            title: 'Back to Scanner',
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+        ),
       ),
     );
   }

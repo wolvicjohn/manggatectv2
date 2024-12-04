@@ -45,7 +45,7 @@ class _ImagePickPageState extends State<ImagePickPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Classify Image'),
-        backgroundColor: AppDesigns.primaryColor, // Use the same primary color
+        backgroundColor: AppDesigns.primaryColor, 
       ),
       body: Center(
         child: Column(
