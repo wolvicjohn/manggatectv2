@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
-import 'package:manggatectv2/utility/DeviceIdentifier.dart';
+// import 'package:manggatectv2/utility/DeviceIdentifier.dart';
 
 class FirestoreService {
   final CollectionReference mango_tree =
@@ -17,12 +18,13 @@ class FirestoreService {
     String? stage,
     required stageImage,
     required bool isArchived,
+    required String uploader,
   }) async {
     try {
       print(
           'Attempting to save mango_tree with Longitude: $longitude, Latitude: $latitude');
 
-      String deviceId = await DeviceIdentifier.getDeviceId();
+      // String deviceId = await DeviceIdentifier.getDeviceId();
 
       // Upload main image to Firebase Storage
       String imageUrl = await uploadImage(image);
@@ -42,7 +44,8 @@ class FirestoreService {
         'stageImageUrl': stageImageUrl,
         'timestamp': Timestamp.now(),
         'isArchived': false,
-        'deviceId': deviceId,
+        // 'deviceId': deviceId,
+        'uploader': uploader,
       });
 
       print('mango_tree added with ID: ${docRef.id}');
@@ -83,9 +86,9 @@ class FirestoreService {
 
   // get user history
   Stream<List<Map<String, dynamic>>> getAllMangoTrees() async* {
-    String deviceId = await DeviceIdentifier.getDeviceId();
+    String username = FirebaseAuth.instance.currentUser?.displayName ?? 'Guest';
 
-    yield* mango_tree.where('deviceId', isEqualTo: deviceId).snapshots().map(
+    yield* mango_tree.where('uploader', isEqualTo: username).snapshots().map(
       (querySnapshot) {
         return querySnapshot.docs.map((doc) {
           return {

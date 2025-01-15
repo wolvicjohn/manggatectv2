@@ -22,13 +22,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  firebase_core: ^2.27.0
-  cloud_firestore: ^4.1.1
+  firebase_core: ^3.2.0
+  cloud_firestore: ^5.1.0
   permission_handler: ^11.3.1
   qr_code_scanner: ^1.0.1
   image_picker: ^1.1.2
   geolocator: ^13.0.1
-  firebase_storage: ^11.6.5
+  firebase_storage: ^12.1.1
   tflite: ^1.1.2
   image: ^3.0.1
   path_provider: ^2.0.11
@@ -44,6 +44,9 @@ dependencies:
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
   url_launcher: ^6.3.1
+  google_sign_in: ^6.2.2
+  firebase_auth: ^5.1.4
+  flutter_map_cancellable_tile_provider: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -56,8 +59,8 @@ flutter_icons:
   adaptive_icon_foreground: "assets/logo_foreground.png"
 
 flutter_native_splash:
-  color: "#147452"   
-  image: "assets/logo_foreground.png"  
+  color: "#147452"
+  image: "assets/logo_foreground.png"
   android: true
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -88,6 +91,9 @@ flutter:
     - assets/book.png
     - assets/mango.png
     - assets/tree_icon.png
+    - assets/stage1_icon.png
+    - assets/stage2_icon.png
+    - assets/stage3_icon.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

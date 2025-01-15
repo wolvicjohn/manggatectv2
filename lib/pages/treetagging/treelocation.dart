@@ -7,8 +7,11 @@ import 'dart:io';
 
 class TreeLocationPage extends StatefulWidget {
   final File image;
+  final String username;
 
-  const TreeLocationPage({Key? key, required this.image}) : super(key: key);
+  const TreeLocationPage(
+      {Key? key, required this.image, required this.username})
+      : super(key: key);
 
   @override
   _TreeLocationPageState createState() => _TreeLocationPageState();
@@ -140,6 +143,7 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
                               page: DisplayOutputPage(
                                 image: widget.image,
                                 location: _locationMessage,
+                                username: widget.username,
                               ),
                             ),
                           );

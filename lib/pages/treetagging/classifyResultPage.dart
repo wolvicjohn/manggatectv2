@@ -14,6 +14,7 @@ class ResultPage extends StatefulWidget {
   final File image;
   final String latitude;
   final String longitude;
+  final String username;
 
   ResultPage({
     Key? key,
@@ -21,6 +22,7 @@ class ResultPage extends StatefulWidget {
     required this.latitude,
     required this.longitude,
     required this.stageImage,
+    required this.username,
   }) : super(key: key);
 
   @override
@@ -119,8 +121,7 @@ class _ResultPageState extends State<ResultPage> {
       }
 
       setState(() {
-        _result =
-            "Label: ${_labels[labelIndex]}\nConfidence: ${(maxScore * 100).toStringAsFixed(2)}%";
+        _result = "Label: ${_labels[labelIndex]}";
         _stage = _labels[labelIndex];
       });
     } catch (e) {
@@ -205,6 +206,7 @@ class _ResultPageState extends State<ResultPage> {
         stageImage: resizedStageImage,
         stage: _stage,
         isArchived: false,
+        uploader: widget.username,
       );
 
       // After saving, show notification
@@ -221,7 +223,7 @@ class _ResultPageState extends State<ResultPage> {
       // Pop the current screen and replace with Homepage
       Navigator.pushReplacement(
         context,
-        CustomPageTransition(page: const Homepage()),
+        CustomPageTransition(page: Homepage(username: widget.username)),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -345,11 +347,13 @@ class _ResultPageState extends State<ResultPage> {
             ),
           ),
         const SizedBox(height: 20),
-        AppDesigns.customButton(
-          title: "Save",
-          onPressed: _saveStageToFirestore,
-          isLoading: _isSaving,
-        ),
+        // Hide the save button if the result is "Invalid"
+        if (_stage != 'Invalid')
+          AppDesigns.customButton(
+            title: "Save",
+            onPressed: _saveStageToFirestore,
+            isLoading: _isSaving,
+          ),
       ],
     );
   }

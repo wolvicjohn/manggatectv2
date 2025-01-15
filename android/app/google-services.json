@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1061766343415",
+    "firebase_url": "https://manggatect-admin-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "manggatect-admin",
     "storage_bucket": "manggatect-admin.appspot.com"
   },
@@ -12,7 +13,12 @@
           "package_name": "com.example.adminmangga"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1061766343415-l37e4oca0nmiqno7asjipvsn3dc1oadb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC_3iIEqT3sKL9eFG-_U3VLpiP-tsiZrjo"
@@ -20,7 +26,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061766343415-l37e4oca0nmiqno7asjipvsn3dc1oadb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1061766343415-bele6c4bqlo2rv6eo6pnb8ig2ccdnaq0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.manggatectv2"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +49,12 @@
           "package_name": "com.example.manggatectv1august"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1061766343415-l37e4oca0nmiqno7asjipvsn3dc1oadb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC_3iIEqT3sKL9eFG-_U3VLpiP-tsiZrjo"
@@ -39,7 +62,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061766343415-l37e4oca0nmiqno7asjipvsn3dc1oadb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1061766343415-bele6c4bqlo2rv6eo6pnb8ig2ccdnaq0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.manggatectv2"
+              }
+            }
+          ]
         }
       }
     },
@@ -50,7 +85,20 @@
           "package_name": "com.example.manggatectv2"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1061766343415-bme8c6q5crqne4dor3vefvm4416n2n6g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.manggatectv2",
+            "certificate_hash": "d682d1d672af7db496cfe9a62dfd48ea883912f0"
+          }
+        },
+        {
+          "client_id": "1061766343415-l37e4oca0nmiqno7asjipvsn3dc1oadb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyC_3iIEqT3sKL9eFG-_U3VLpiP-tsiZrjo"
@@ -58,7 +106,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1061766343415-l37e4oca0nmiqno7asjipvsn3dc1oadb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1061766343415-bele6c4bqlo2rv6eo6pnb8ig2ccdnaq0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.manggatectv2"
+              }
+            }
+          ]
         }
       }
     }

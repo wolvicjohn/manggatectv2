@@ -22,6 +22,11 @@ class AppDesigns {
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );
+  static TextStyle titleTextStyle1 = const TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+    color: primaryColor,
+  );
   static TextStyle titleTextStyle2 = const TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.bold,

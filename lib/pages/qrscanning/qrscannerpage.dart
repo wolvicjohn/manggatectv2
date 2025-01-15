@@ -5,7 +5,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'qrresultpage.dart';
 
 class QRScannerPage extends StatefulWidget {
-  const QRScannerPage({super.key});
+  final String username;
+  const QRScannerPage({super.key, required this.username});
 
   @override
   State<QRScannerPage> createState() => _QRScannerPageState();
@@ -57,7 +58,7 @@ class _QRScannerPageState extends State<QRScannerPage> {
         Navigator.pushReplacement(
           context,
           CustomPageTransition(
-            page: QRResultPage(qrResult: scanData.code!),
+            page: QRResultPage(qrResult: scanData.code!, username: widget.username,),
           ),
         );
       }

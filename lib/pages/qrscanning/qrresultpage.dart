@@ -8,8 +8,9 @@ import '../../services/app_designs.dart';
 
 class QRResultPage extends StatefulWidget {
   final String qrResult;
+  final String username;
 
-  const QRResultPage({super.key, required this.qrResult});
+  const QRResultPage({super.key, required this.qrResult, required this.username});
 
   @override
   State<QRResultPage> createState() => _QRResultPageState();
@@ -58,7 +59,7 @@ class _QRResultPageState extends State<QRResultPage> {
       Navigator.push(
         context,
         CustomPageTransition(
-          page: ImagePickPage(docID: docID),
+          page: ImagePickPage(docID: docID, username: widget.username,),
         ),
       );
     }

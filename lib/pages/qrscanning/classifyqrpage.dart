@@ -9,11 +9,13 @@ import '../home_page.dart';
 class ConfirmPage extends StatefulWidget {
   final File stageImage;
   final String docID;
+  final String username;
 
   const ConfirmPage({
     super.key,
     required this.stageImage,
     required this.docID,
+    required this.username,
   });
 
   @override
@@ -29,13 +31,15 @@ class _ConfirmPageState extends State<ConfirmPage> {
   bool _isSaving = false;
 
   final Map<String, String> _descriptions = {
-    'Invalid':'Invalid Image, try again',
+    'Invalid': 'Invalid Image, try again',
     'stage-1':
-        'Budding phase: During this phase, the tree begins to form flower buds...',
-    'stage-2': 'Flowers blossom during the growth stage...',
-    'stage-3': 'Complete bloom stage: Blossoms cover the tree...',
+        'Budding phase: During this phase, the tree begins to form flower buds. As these buds mature, they enlarge and adopt a red hue. The duration of this stage can vary for weeks, contingent on the mango type.',
+    'stage-2':
+        'Flowers blossom during the growth stage. The petals typically exhibit white or light yellow colors. This phase generally persists for a handful of days.',
+    'stage-3':
+        'Complete bloom stage: Blossoms cover the tree, and the flowers open fully, but this stage lasts only a day or two.',
     'stage-4':
-        'Fruit setting stage: This is when the flowers turn into small mangos...',
+        'Fruit setting stage: This is the stage when the flowers turn into small mangos. The mangos can take several weeks to reach their full growth stage and become ready for harvest.',
   };
 
   @override
@@ -46,9 +50,10 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
   Future<void> _loadModelAndLabels() async {
     try {
-      _interpreter = await Interpreter.fromAsset('assets/model.tflite'); // load the algo model
-      final labelsData =
-          await DefaultAssetBundle.of(context).loadString('assets/labels.txt'); //load and process labels
+      _interpreter = await Interpreter.fromAsset(
+          'assets/model.tflite'); // load the algo model
+      final labelsData = await DefaultAssetBundle.of(context)
+          .loadString('assets/labels.txt'); //load and process labels
       _labels = labelsData
           .split('\n')
           .map((e) => e.trim())
@@ -56,7 +61,8 @@ class _ConfirmPageState extends State<ConfirmPage> {
           .toList();
 
       if (_labels.isEmpty) {
-        throw Exception("Labels file is empty or not found!"); //if no labels are found, throw exception
+        throw Exception(
+            "Labels file is empty or not found!"); //if no labels are found, throw exception
       }
 
       await _classifyImage();
@@ -66,14 +72,20 @@ class _ConfirmPageState extends State<ConfirmPage> {
   }
 
   img.Image _preprocessImage(File stageImage) {
-    final originalImage = img.decodeImage(stageImage.readAsBytesSync())!;  //decode the image
-    return img.copyResize(originalImage, width: 224, height: 224); //resize the image into 224 x 224
+    final originalImage =
+        img.decodeImage(stageImage.readAsBytesSync())!; //decode the image
+    return img.copyResize(originalImage,
+        width: 224, height: 224); //resize the image into 224 x 224
   }
 
-  List<List<List<List<double>>>> _imageToInputTensor(img.Image image) { //generate tensor structure 
-    return List.generate(1, (_) {  // batch size 1 image
-      return List.generate(224, (y) { //width
-        return List.generate(224, (x) { // height
+  List<List<List<List<double>>>> _imageToInputTensor(img.Image image) {
+    //generate tensor structure
+    return List.generate(1, (_) {
+      // batch size 1 image
+      return List.generate(224, (y) {
+        //width
+        return List.generate(224, (x) {
+          // height
           final pixel = image.getPixel(x, y); // RGB values
           return [
             img.getRed(pixel) / 255.0,
@@ -89,15 +101,18 @@ class _ConfirmPageState extends State<ConfirmPage> {
     setState(() => _loading = true);
 
     try {
-      final inputTensor =
-          _imageToInputTensor(_preprocessImage(widget.stageImage)); // Preprocess the image and convert to required tensor format
-      final outputTensor =
-          List.filled(_labels.length, 0.0).reshape([1, _labels.length]);  // create empty list to store the classification results
+      final inputTensor = _imageToInputTensor(_preprocessImage(widget
+          .stageImage)); // Preprocess the image and convert to required tensor format
+      final outputTensor = List.filled(_labels.length, 0.0).reshape([
+        1,
+        _labels.length
+      ]); // create empty list to store the classification results
 
       _interpreter.run(inputTensor, outputTensor); // run inference
 
-      final output = outputTensor[0].cast<double>(); // the models output is parsed to find the label with the highest confidence score(maxscore)
-      double maxScore = output[0]; 
+      final output = outputTensor[0].cast<
+          double>(); // the models output is parsed to find the label with the highest confidence score(maxscore)
+      double maxScore = output[0];
       int labelIndex = 0;
 
       for (int i = 1; i < output.length; i++) {
@@ -108,8 +123,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
       }
 
       setState(() {
-        _result =
-            "CLassified as: ${_labels[labelIndex]}";  
+        _result = "CLassified as: ${_labels[labelIndex]}";
         _stage = _labels[labelIndex];
       });
     } catch (e) {
@@ -138,13 +152,13 @@ class _ConfirmPageState extends State<ConfirmPage> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context, false); 
+                    Navigator.pop(context, false);
                   },
                   child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context, true); 
+                    Navigator.pop(context, true);
                   },
                   child: const Text('Yes'),
                 ),
@@ -172,7 +186,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
         await firestoreService.updateStage(
           docID: widget.docID,
           stage: _stage!,
-          stageImage: widget.stageImage, 
+          stageImage: widget.stageImage,
         );
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Stage saved successfully!')),
@@ -180,7 +194,8 @@ class _ConfirmPageState extends State<ConfirmPage> {
         // Pop the current screen and replace with Homepage
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Homepage()),
+          MaterialPageRoute(
+              builder: (context) => Homepage(username: widget.username)),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

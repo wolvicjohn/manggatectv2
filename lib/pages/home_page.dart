@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manggatectv2/pages/history/historypage.dart';
+import 'package:manggatectv2/pages/map/alltreelocationpage.dart';
 import 'package:manggatectv2/pages/qrscanning/qrscannerpage.dart';
 import 'package:manggatectv2/services/firestore.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
@@ -7,7 +8,8 @@ import '../services/app_designs.dart';
 import 'treetagging/treetaggingpage.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  final String username;
+  Homepage({required this.username});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -22,6 +24,10 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // Hides the back button
+        title: Text(
+          'Hello, ${widget.username}!',
+          style: AppDesigns.titleTextStyle1,
+        ),
         actions: [
           IconButton(
             icon: const Icon(
@@ -75,7 +81,10 @@ class _HomepageState extends State<Homepage> {
                   // Use the custom page transition
                   Navigator.push(
                     context,
-                    CustomPageTransition(page: const QRScannerPage()),
+                    CustomPageTransition(
+                        page: QRScannerPage(
+                      username: widget.username,
+                    )),
                   );
                 },
               ),
@@ -86,7 +95,10 @@ class _HomepageState extends State<Homepage> {
                   // Use the custom page transition
                   Navigator.push(
                     context,
-                    CustomPageTransition(page: const TreeTaggingPage()),
+                    CustomPageTransition(
+                        page: TreeTaggingPage(
+                      username: widget.username,
+                    )),
                   );
                 },
               ),
@@ -98,6 +110,20 @@ class _HomepageState extends State<Homepage> {
                   Navigator.push(
                     context,
                     BottomSlidePageTransition(page: const HistoryPage()),
+                  );
+                },
+              ),
+              const SizedBox(height: 5),
+              AppDesigns.customButton(
+                title: "Map",
+                onPressed: () {
+                  // Use the custom page transition
+                  Navigator.push(
+                    context,
+                    BottomSlidePageTransition(
+                        page: AllTreeLocationPage(
+                      username: widget.username,
+                    )),
                   );
                 },
               ),

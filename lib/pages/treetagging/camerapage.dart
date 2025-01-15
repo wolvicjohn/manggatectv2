@@ -6,7 +6,8 @@ import '../../services/app_designs.dart';
 import 'treelocation.dart';
 
 class ImagePickerPage extends StatefulWidget {
-  const ImagePickerPage({super.key});
+  final String username;
+  ImagePickerPage({super.key, required this.username});
 
   @override
   State<ImagePickerPage> createState() => _ImagePickerPageState();
@@ -35,7 +36,11 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
         // Navigate to TreeLocationPage to get location
         Navigator.pushReplacement(
           context,
-          CustomPageTransition(page: TreeLocationPage(image: _selectedImage)),
+          CustomPageTransition(
+              page: TreeLocationPage(
+            image: _selectedImage,
+            username: widget.username,
+          )),
         );
       } else {
         // Handle case when the user cancels image capture

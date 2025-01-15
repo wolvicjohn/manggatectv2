@@ -4,7 +4,11 @@ import '../../services/app_designs.dart';
 import 'camerapage.dart';
 
 class TreeTaggingPage extends StatelessWidget {
-  const TreeTaggingPage({super.key});
+  final String username;
+  TreeTaggingPage({
+    super.key,
+    required this.username,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +52,12 @@ class TreeTaggingPage extends StatelessWidget {
                   Center(
                     // Center the image
                     child: Image.asset(
-                      'assets/book.png', 
-                      height: 100, 
-                      width: 100, 
+                      'assets/book.png',
+                      height: 100,
+                      width: 100,
                     ),
                   ),
-                  const SizedBox(
-                      height: 40), 
+                  const SizedBox(height: 40),
                   const Text(
                     '1. Take a photo of the tree you want to tag\n'
                     '2. Get close for accurate location accuracy.\n'
@@ -72,7 +75,9 @@ class TreeTaggingPage extends StatelessWidget {
                 // Navigate to the ImagePickerPage when the "Continue" button is pressed
                 Navigator.push(
                   context,
-                  CustomPageTransition(page: const ImagePickerPage()),
+                  CustomPageTransition(
+                    page: ImagePickerPage(username: username),
+                  ),
                 );
               },
             ),

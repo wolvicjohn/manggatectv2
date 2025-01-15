@@ -11,11 +11,13 @@ import '../../services/firestore.dart';
 class DisplayOutputPage extends StatefulWidget {
   final File image;
   final String location;
+  final String username;
 
   const DisplayOutputPage({
     Key? key,
     required this.image,
     required this.location,
+    required this.username,
   }) : super(key: key);
 
   @override
@@ -106,6 +108,7 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
               latitude: latitude,
               longitude: longitude,
               image: widget.image,
+              username: widget.username,
             ),
           ),
         );
@@ -117,6 +120,7 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
           image: widget.image,
           stageImage: null,
           isArchived: false,
+          uploader: widget.username,
         );
 
         // Show a success message if saved
@@ -125,7 +129,7 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
         );
         Navigator.pushReplacement(
           context,
-          CustomPageTransition(page: const Homepage()),
+          CustomPageTransition(page: Homepage(username: widget.username)),
         );
       }
     } catch (e) {

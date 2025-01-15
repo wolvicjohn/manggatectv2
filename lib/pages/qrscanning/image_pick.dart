@@ -7,9 +7,11 @@ import '../../services/app_designs.dart';
 
 class ImagePickPage extends StatefulWidget {
   final String docID;
+  final String username;
+  
   const ImagePickPage({
     required this.docID,
-    super.key,
+    super.key, required this.username,
   });
 
   @override
@@ -33,7 +35,7 @@ class _ImagePickPageState extends State<ImagePickPage> {
         CustomPageTransition(
           page: ConfirmPage(
             docID: widget.docID,
-            stageImage: stageImage,
+            stageImage: stageImage, username: widget.username,
           ),
         ),
       );

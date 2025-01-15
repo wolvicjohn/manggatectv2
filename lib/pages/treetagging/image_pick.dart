@@ -9,12 +9,14 @@ class ClassifyPage extends StatefulWidget {
   final String latitude;
   final String longitude;
   final File image;
+  final String username;
 
   const ClassifyPage({
     Key? key,
     required this.latitude,
     required this.longitude,
     required this.image,
+    required this.username,
   }) : super(key: key);
 
   @override
@@ -46,6 +48,7 @@ class _ClassifyPageState extends State<ClassifyPage> {
             image: widget.image,
             latitude: widget.latitude,
             longitude: widget.longitude,
+            username: widget.username,
           ),
         ),
       );
@@ -61,7 +64,7 @@ class _ClassifyPageState extends State<ClassifyPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Classify Image'),
-        backgroundColor: AppDesigns.primaryColor, 
+        backgroundColor: AppDesigns.primaryColor,
       ),
       body: Center(
         child: _isLoading
