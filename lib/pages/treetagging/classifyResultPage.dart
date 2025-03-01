@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/services/button_design.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
 import 'package:manggatectv2/utility/notificationservice.dart';
 import 'package:path_provider/path_provider.dart';
@@ -48,6 +49,48 @@ class _ResultPageState extends State<ResultPage> {
         'Complete bloom stage: Blossoms cover the tree, and the flowers open fully, but this stage lasts only a day or two.',
     'stage-4':
         'Fruit setting stage: This is the stage when the flowers turn into small mangos. The mangos can take several weeks to reach their full growth stage and become ready for harvest.',
+  };
+
+  final Map<String, String> _careRecommend = {
+    'Invalid': 'Invalid Image, try again',
+    'stage-1':
+        'Watering: Water deeply but less frequently to encourage deeper root growth.',
+    'stage-2':
+        'Watering: Reduce watering slightly to avoid stimulating excessive vegetative growth, which can hinder flowering.',
+    'stage-3':
+        'Watering: Maintain consistent moisture levels to prevent fruit drop.',
+    'stage-4':
+        'Watering: Reduce watering slightly as the fruit matures to improve sweetness.',
+  };
+  final Map<String, String> _fertilization = {
+    'Invalid': 'Invalid Image, try again',
+    'stage-1': 'Fertilization: Add organic compost to improve soil health.',
+    'stage-2':
+        'Fertilization: Avoid nitrogen-heavy fertilizers at this stage, as they encourage leaf growth over flowers.',
+    'stage-3':
+        'Fertilization: Add micronutrients like zinc and boron for better fruit retention.',
+    'stage-4':
+        'Harvest Timing: Harvest fruits when they emit a fruity aroma and the skin color changes appropriately, Avoid picking fruits too early, as they may not ripen properly.',
+  };
+  final Map<String, String> _pruning = {
+    'Invalid': 'Invalid Image, try again',
+    'stage-1':
+        'Remove dead or diseased branches to improve airflow and light penetration.',
+    'stage-2':
+        'Pollination Support: Mango flowers are pollinated by insects, so encourage natural pollinators like bees. Avoid spraying insecticides during flowering.',
+    'stage-3':
+        'Thinning: If there are too many fruits, remove some to prevent the tree from being overburdened and ensure better fruit quality.',
+    'stage-4':
+        'Post-Harvest Care: Store fruits in a cool, dry place to prolong shelf life.',
+  };
+  final Map<String, String> _pestControl = {
+    'Invalid': 'Invalid Image, try again',
+    'stage-1':
+        'Watch for pests like aphids and scale insects. Treat with neem oil if necessary.',
+    'stage-2':
+        'Disease Management: Watch for powdery mildew or anthracnose, which can damage flowers. Use appropriate fungicides if needed.',
+    'stage-3':
+        'Pest and Disease Control: Monitor for fruit flies and bag fruits with protective coverings if necessary.',
   };
 
   @override
@@ -121,7 +164,7 @@ class _ResultPageState extends State<ResultPage> {
       }
 
       setState(() {
-        _result = "Label: ${_labels[labelIndex]}";
+        _result = "Classified as: ${_labels[labelIndex]}";
         _stage = _labels[labelIndex];
       });
     } catch (e) {
@@ -323,7 +366,15 @@ class _ResultPageState extends State<ResultPage> {
           ),
         ),
         const SizedBox(height: 20),
-        if (_stage != null && _descriptions.containsKey(_stage!))
+        if (_stage != null && _stage != 'Invalid')
+          Column(
+            children: [
+              Text('Description', style: AppDesigns.titleTextStyle2),
+            ],
+          ),
+        if (_stage != null &&
+            _stage != 'Invalid' &&
+            _descriptions.containsKey(_stage!))
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16.0),
@@ -347,12 +398,123 @@ class _ResultPageState extends State<ResultPage> {
             ),
           ),
         const SizedBox(height: 20),
+        if (_stage != null && _stage != 'Invalid')
+          Text('Maintenance Recommendations',
+              style: AppDesigns.titleTextStyle2),
+        const SizedBox(height: 20),
+        if (_stage != null &&
+            _stage != 'Invalid' &&
+            _careRecommend.containsKey(_stage!))
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: AppDesigns.backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4.0,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_careRecommend[_stage!] ?? 'No description available.',
+                    style: AppDesigns.bodyText2),
+              ],
+            ),
+          ),
+        const SizedBox(height: 10),
+        if (_stage != null &&
+            _stage != 'Invalid' &&
+            _fertilization.containsKey(_stage!))
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: AppDesigns.backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4.0,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_fertilization[_stage!] ?? 'No description available.',
+                    style: AppDesigns.bodyText2),
+              ],
+            ),
+          ),
+        const SizedBox(height: 10),
+        if (_stage != null &&
+            _stage != 'Invalid' &&
+            _pruning.containsKey(_stage!))
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: AppDesigns.backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4.0,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_pruning[_stage!] ?? 'No description available.',
+                    style: AppDesigns.bodyText2),
+              ],
+            ),
+          ),
+        const SizedBox(height: 10),
+        if (_stage != null &&
+            _stage != 'Invalid' &&
+            _pestControl.containsKey(_stage!))
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: AppDesigns.backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 4.0,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(_pestControl[_stage!] ?? 'No description available.',
+                    style: AppDesigns.bodyText2),
+              ],
+            ),
+          ),
+
+        const SizedBox(height: 20),
         // Hide the save button if the result is "Invalid"
         if (_stage != 'Invalid')
-          AppDesigns.customButton(
+          FeatureCard(
             title: "Save",
-            onPressed: _saveStageToFirestore,
-            isLoading: _isSaving,
+            icon: Icons.save,
+            color: AppDesigns.primaryColor,
+            delay: 800,
+            onTap: _saveStageToFirestore,
           ),
       ],
     );

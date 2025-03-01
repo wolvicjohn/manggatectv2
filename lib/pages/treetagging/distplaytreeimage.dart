@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:manggatectv2/pages/home_page.dart';
 import 'package:manggatectv2/pages/treetagging/image_pick.dart';
+import 'package:manggatectv2/services/button_design.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
 import 'dart:io';
 import '../../services/app_designs.dart';
@@ -217,9 +218,12 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
                     ),
                     const SizedBox(height: 40),
                     // Custom Save button
-                    AppDesigns.customButton(
-                      title: 'Save',
-                      onPressed: savemango_tree,
+                    FeatureCard(
+                      title: "Save",
+                      icon: Icons.save,
+                      color: AppDesigns.primaryColor,
+                      delay: 800,
+                      onTap: savemango_tree,
                     ),
                   ],
                 ),

@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:manggatectv2/pages/home_page.dart';
 import 'package:manggatectv2/services/app_designs.dart';
+import 'package:animate_do/animate_do.dart'; // Add this package for animations
 
 class GoogleLoginPage extends StatefulWidget {
   @override
@@ -20,9 +21,7 @@ class _GoogleLoginPageState extends State<GoogleLoginPage> {
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sign-in cancelled by user')),
-        );
+        _showSnackBar('Sign-in cancelled by user');
         return null;
       }
 
@@ -38,9 +37,7 @@ class _GoogleLoginPageState extends State<GoogleLoginPage> {
       return userCredential.user;
     } catch (e) {
       print("Error during sign-in: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign in: ${e.toString()}')),
-      );
+      _showSnackBar('Failed to sign in: ${e.toString()}');
       return null;
     } finally {
       setState(() => _isLoading = false);
@@ -52,98 +49,156 @@ class _GoogleLoginPageState extends State<GoogleLoginPage> {
       setState(() => _isLoading = true);
       await _googleSignIn.signOut();
       await _auth.signOut();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Successfully signed out')),
-      );
+      _showSnackBar('Successfully signed out');
     } catch (e) {
       print("Error during sign-out: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign out: ${e.toString()}')),
-      );
+      _showSnackBar('Failed to sign out: ${e.toString()}');
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: EdgeInsets.all(10),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: AppDesigns.primaryColor,
-        child: Center(
-          child: _isLoading
-              ? CircularProgressIndicator()
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      // Add logo or image
-                      Image.asset(
-                        'assets/mango.png', // Make sure to add the logo in your assets folder
-                        height: 100,
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Sign in to continue',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(height: 30),
-                      // Sign-in button
-                      ElevatedButton(
-                        onPressed: _isLoading
-                            ? null
-                            : () async {
-                                User? user = await _signInWithGoogle();
-                                if (user != null) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Homepage(
-                                        username: user.displayName ?? 'Guest',
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              AppDesigns.primaryColor,
+              AppDesigns.primaryColor.withOpacity(0.8),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: _isLoading
+                ? CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  )
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          // Logo with animation
+                          FadeInDown(
+                            duration: Duration(milliseconds: 800),
+                            child: Hero(
+                              tag: 'app_logo',
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
+                                child: Image.asset(
+                                  'assets/mango.png',
+                                  height: 120,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 40),
+
+                          // Welcome text with animation
+                          FadeInUp(
+                            duration: Duration(milliseconds: 800),
+                            delay: Duration(milliseconds: 300),
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Welcome',
+                                  style: TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Text(
+                                  'Sign in to continue to ManggaTech',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white.withOpacity(0.8),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 50),
+
+                          // Sign-in button with animation
+                          FadeInUp(
+                            duration: Duration(milliseconds: 800),
+                            delay: Duration(milliseconds: 600),
+                            child: Container(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: _isLoading
+                                    ? null
+                                    : () async {
+                                        User? user = await _signInWithGoogle();
+                                        if (user != null) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Homepage(
+                                                username:
+                                                    user.displayName ?? 'Guest',
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'assets/google_logo.png', // Add Google logo to assets
+                                      height: 24,
+                                    ),
+                                    SizedBox(width: 12),
+                                    Text(
+                                      'Continue with Google',
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                  );
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white, // Button color
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.login, color: Colors.black),
-                            SizedBox(width: 10),
-                            Text('Sign in with Google',
-                                style: TextStyle(color: Colors.black)),
-                          ],
-                        ),
+                        ],
                       ),
-                      SizedBox(height: 16),
-                      // Sign-out button
-                      ElevatedButton(
-                        onPressed: _isLoading ? null : _signOut,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent, // Button color
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text('Sign out',
-                            style: TextStyle(color: Colors.white)),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );

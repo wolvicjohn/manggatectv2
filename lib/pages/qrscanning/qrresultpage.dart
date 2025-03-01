@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:manggatectv2/pages/qrscanning/image_pick.dart';
+import 'package:manggatectv2/services/button_design.dart';
 import 'package:manggatectv2/services/firestore.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -10,7 +11,8 @@ class QRResultPage extends StatefulWidget {
   final String qrResult;
   final String username;
 
-  const QRResultPage({super.key, required this.qrResult, required this.username});
+  const QRResultPage(
+      {super.key, required this.qrResult, required this.username});
 
   @override
   State<QRResultPage> createState() => _QRResultPageState();
@@ -59,7 +61,10 @@ class _QRResultPageState extends State<QRResultPage> {
       Navigator.push(
         context,
         CustomPageTransition(
-          page: ImagePickPage(docID: docID, username: widget.username,),
+          page: ImagePickPage(
+            docID: docID,
+            username: widget.username,
+          ),
         ),
       );
     }
@@ -138,7 +143,8 @@ class _QRResultPageState extends State<QRResultPage> {
                                     children: [
                                       TileLayer(
                                         urlTemplate:
-                                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                                        userAgentPackageName: 'com.example.app',
                                       ),
                                       MarkerLayer(
                                         markers: [
@@ -166,14 +172,20 @@ class _QRResultPageState extends State<QRResultPage> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          AppDesigns.customButton(
-                            title: 'Classify',
-                            onPressed: _navigateToClassifyPage,
+                          FeatureCard(
+                            title: "Classify",
+                            icon: Icons.arrow_forward,
+                            color: AppDesigns.primaryColor,
+                            delay: 600,
+                            onTap: _navigateToClassifyPage,
                           ),
                           const SizedBox(height: 10),
-                          AppDesigns.customButton(
-                            title: 'Back to Scanner',
-                            onPressed: () => Navigator.pop(context),
+                          FeatureCard(
+                            title: "Scan Again",
+                            icon: Icons.qr_code_scanner,
+                            color: Color(0xFF2196F3),
+                            delay: 600,
+                            onTap: () => Navigator.pop(context),
                           ),
                         ],
                       ),

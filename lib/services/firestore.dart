@@ -56,7 +56,7 @@ class FirestoreService {
     }
   }
 
-  // Method to update the stage and its image URL
+  // Method to update the stage and its image URL, with history tracking
   Future<void> updateStage({
     required String docID,
     required String stage,
@@ -65,19 +65,37 @@ class FirestoreService {
     try {
       print('Updating stage for mango_tree ID: $docID to $stage');
 
+      // Reference to the document to be updated
+      DocumentReference docRef = mango_tree.doc(docID);
+
+      // Fetch the current data from Firestore
+      DocumentSnapshot currentDoc = await docRef.get();
+      if (!currentDoc.exists) {
+        throw Exception('Document with ID $docID does not exist.');
+      }
+
+      // Move the current data to the `history` sub-collection
+      Map<String, dynamic> currentData =
+          currentDoc.data() as Map<String, dynamic>;
+      await docRef.collection('history').add({
+        ...currentData, // Add all fields from the current document
+        'moved_at': Timestamp.now(), // Add a timestamp for when it was moved
+      });
+
       // Upload new stage image if provided
       String? stageImageUrl;
       if (stageImage != null) {
         stageImageUrl = await uploadImage(stageImage);
       }
 
-      // Update mango_tree in Firestore
-      await mango_tree.doc(docID).update({
+      // Update the main document with new data
+      await docRef.update({
         'stage': stage, // Update the stage field
         if (stageImageUrl != null) 'stageImageUrl': stageImageUrl,
-        'timestamp': Timestamp.now(), // Optionally update the timestamp
+        'timestamp': Timestamp.now(), // Update the timestamp
       });
-      print('Stage updated successfully!');
+
+      print('Stage updated and history saved successfully!');
     } catch (e) {
       print('Error updating stage: $e');
       rethrow;

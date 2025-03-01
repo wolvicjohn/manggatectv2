@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:manggatectv2/services/button_design.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
 import '../../services/app_designs.dart';
 import 'distplaytreeimage.dart';
@@ -20,16 +23,16 @@ class TreeLocationPage extends StatefulWidget {
 class _TreeLocationPageState extends State<TreeLocationPage> {
   String _locationMessage = '';
   bool _isLocationFetched = false;
-  bool _isLoading = false; // To track loading state
+  bool _isLoading = false;
 
-  // Function to get the current location
+  LatLng? _markerPosition; // Stores marker position
+
   Future<void> _getCurrentLocation() async {
     setState(() {
-      _isLoading = true; // Start loading
+      _isLoading = true;
     });
 
     try {
-      // Check for location permission
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
@@ -37,35 +40,34 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
 
       if (permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always) {
-        // Use LocationSettings for current position retrieval
         Position position = await Geolocator.getCurrentPosition(
           locationSettings: LocationSettings(
-            accuracy: LocationAccuracy.best,
-            distanceFilter: 10, // Update every 10 meters
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 10,
           ),
         );
+
         setState(() {
+          _markerPosition = LatLng(position.latitude,
+              position.longitude); // Set initial marker position
           _locationMessage =
               'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-          _isLocationFetched =
-              true; // Update state to indicate location fetched
+          _isLocationFetched = true;
         });
       } else {
         setState(() {
           _locationMessage = 'Location permission denied';
-          _isLocationFetched =
-              false; // Update state since location fetching failed
+          _isLocationFetched = false;
         });
       }
     } catch (e) {
       setState(() {
         _locationMessage = 'Error getting location: $e';
-        _isLocationFetched =
-            false; // Update state since location fetching failed
+        _isLocationFetched = false;
       });
     } finally {
       setState(() {
-        _isLoading = false; // Stop loading
+        _isLoading = false;
       });
     }
   }
@@ -82,78 +84,151 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
         elevation: 4,
         centerTitle: true,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/traveler.png',
-                width: 200,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-              const SizedBox(height: 30),
-              const Text(
-                'Get close to the tree you want to tag.',
-                style: AppDesigns.labelTextStyle,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              if (_isLoading)
-                AppDesigns.loadingIndicator() // Show loading indicator
-              else
-                AppDesigns.customButton(
-                  title: 'Get Location',
-                  onPressed: _getCurrentLocation,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/traveler.png',
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.cover,
                 ),
-              const SizedBox(height: 20),
-              if (_isLocationFetched) ...[
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: AppDesigns.backgroundColor,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 4.0,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                const SizedBox(height: 30),
+                const Text(
+                  'Get close to the tree you want to tag.\nThen, adjust the marker if needed.',
+                  style: AppDesigns.labelTextStyle,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                if (_isLoading)
+                  AppDesigns.loadingIndicator()
+                else
+                  FeatureCard(
+                    title: "Get Location",
+                    icon: Icons.location_pin,
+                    color: Colors.red,
+                    delay: 0,
+                    onTap: _getCurrentLocation,
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        _locationMessage,
-                        style: AppDesigns.locationTextStyle,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      AppDesigns.customButton(
-                        title: 'Continue',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            PopTransition(
-                              page: DisplayOutputPage(
-                                image: widget.image,
-                                location: _locationMessage,
-                                username: widget.username,
-                              ),
+                const SizedBox(height: 20),
+                if (_isLocationFetched) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: AppDesigns.backgroundColor,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4.0,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 250, // Increased map size
+                          child: FlutterMap(
+                            options: MapOptions(
+                              initialCenter: _markerPosition!,
+                              initialZoom: 18,
+                              onTap: (tapPosition, point) {
+                                setState(() {
+                                  _markerPosition = point;
+                                  _locationMessage =
+                                      'Latitude: ${point.latitude}, Longitude: ${point.longitude}';
+                                });
+                              },
                             ),
-                          );
-                        },
-                      ),
-                    ],
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                                userAgentPackageName: 'com.example.app',
+                              ),
+                              MarkerLayer(
+                                markers: [
+                                  Marker(
+                                    point: _markerPosition!,
+                                    width: 50.0,
+                                    height: 50.0,
+                                    child: GestureDetector(
+                                      onPanUpdate: (details) {
+                                        // Allow dragging the marker
+                                        setState(() {
+                                          _markerPosition = LatLng(
+                                            _markerPosition!.latitude +
+                                                details.delta.dy * 0.0001,
+                                            _markerPosition!.longitude +
+                                                details.delta.dx * 0.0001,
+                                          );
+                                          _locationMessage =
+                                              'Latitude: ${_markerPosition!.latitude}, Longitude: ${_markerPosition!.longitude}';
+                                        });
+                                      },
+                                      child: Image.asset(
+                                        'assets/tree_icon.png',
+                                        width: 40.0,
+                                        height: 40.0,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          _locationMessage,
+                          style: AppDesigns.locationTextStyle.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        Divider(
+                          color: AppDesigns.primaryColor.withOpacity(0.5),
+                          thickness: 1,
+                          indent: 20,
+                          endIndent: 20,
+                        ),
+                        const SizedBox(height: 20),
+                        FeatureCard(
+                          title: "Continue",
+                          icon: Icons.arrow_forward,
+                          color: AppDesigns.primaryColor,
+                          delay: 800,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PopTransition(
+                                page: DisplayOutputPage(
+                                  image: widget.image,
+                                  location: _locationMessage,
+                                  username: widget.username,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

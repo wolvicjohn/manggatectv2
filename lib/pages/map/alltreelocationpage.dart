@@ -92,12 +92,10 @@ class AllTreeLocationPageState extends State<AllTreeLocationPage> {
                         ),
                         children: [
                           TileLayer(
-                            urlTemplate:
-                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            subdomains: const ['a', 'b', 'c'],
-                            tileProvider: CancellableNetworkTileProvider(),
-                            userAgentPackageName: 'Manggatech',
-                          ),
+                                urlTemplate:
+                                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                                userAgentPackageName: 'com.example.app',
+                              ),
                           MarkerLayer(
                             markers: locations.map((location) {
                               // Find the corresponding document to get its 'stage'
