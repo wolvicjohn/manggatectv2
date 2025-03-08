@@ -165,7 +165,8 @@ class _ConfirmPageState extends State<ConfirmPage> {
       }
 
       setState(() {
-        _result = "CLassified as: ${_labels[labelIndex]}";
+        _result =
+            "Classified as: ${_labels[labelIndex]} (Accuracy: ${(maxScore * 100).toStringAsFixed(2)}%)";
         _stage = _labels[labelIndex];
       });
     } catch (e) {
@@ -479,14 +480,14 @@ class _ConfirmPageState extends State<ConfirmPage> {
             ),
           ),
         const SizedBox(height: 20),
-        if(_stage != 'Invalid' )
-        FeatureCard(
-          title: "Save",
-          icon: Icons.map,
-          color: AppDesigns.primaryColor,
-          delay: 800,
-          onTap: _saveStageToFirestore,
-        ),
+        if (_stage != 'Invalid')
+          FeatureCard(
+            title: "Save",
+            icon: Icons.map,
+            color: AppDesigns.primaryColor,
+            delay: 800,
+            onTap: _saveStageToFirestore,
+          ),
       ],
     );
   }

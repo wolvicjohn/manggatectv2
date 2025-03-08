@@ -45,6 +45,7 @@ class AllTreeLocationPageState extends State<AllTreeLocationPage> {
                     stream: FirebaseFirestore.instance
                         .collection('mango_tree')
                         .where('uploader', isEqualTo: widget.username)
+                        .where('isArchived', isEqualTo: false)
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -93,7 +94,7 @@ class AllTreeLocationPageState extends State<AllTreeLocationPage> {
                         children: [
                           TileLayer(
                                 urlTemplate:
-                                    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                                 userAgentPackageName: 'com.example.app',
                               ),
                           MarkerLayer(

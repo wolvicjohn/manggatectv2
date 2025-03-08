@@ -3,7 +3,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:manggatectv2/pages/home_page.dart';
 import 'package:manggatectv2/services/app_designs.dart';
-import 'package:animate_do/animate_do.dart'; // Add this package for animations
+import 'package:animate_do/animate_do.dart';
+import 'package:package_info_plus/package_info_plus.dart'; // Add this package for animations
 
 class GoogleLoginPage extends StatefulWidget {
   @override
@@ -193,6 +194,28 @@ class _GoogleLoginPageState extends State<GoogleLoginPage> {
                                 ),
                               ),
                             ),
+                          ),
+                          SizedBox(height: 20),
+                          FutureBuilder<PackageInfo>(
+                            future: PackageInfo.fromPlatform(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return SizedBox.shrink();
+                              }
+                              if (!snapshot.hasData) {
+                                return Text(
+                                  'Version: Unknown',
+                                  style: TextStyle(
+                                      color: Colors.white70, fontSize: 14),
+                                );
+                              }
+                              return Text(
+                                'Version: ${snapshot.data!.version}',
+                                style: TextStyle(
+                                    color: Colors.white70, fontSize: 14),
+                              );
+                            },
                           ),
                         ],
                       ),

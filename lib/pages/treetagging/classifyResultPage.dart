@@ -164,7 +164,8 @@ class _ResultPageState extends State<ResultPage> {
       }
 
       setState(() {
-        _result = "Classified as: ${_labels[labelIndex]}";
+        _result =
+            "Classified as: ${_labels[labelIndex]} (Accuracy: ${(maxScore * 100).toStringAsFixed(2)}%)";
         _stage = _labels[labelIndex];
       });
     } catch (e) {

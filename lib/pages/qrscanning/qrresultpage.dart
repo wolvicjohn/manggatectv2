@@ -143,7 +143,7 @@ class _QRResultPageState extends State<QRResultPage> {
                                     children: [
                                       TileLayer(
                                         urlTemplate:
-                                            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                                            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                                         userAgentPackageName: 'com.example.app',
                                       ),
                                       MarkerLayer(

@@ -40,7 +40,7 @@ class FirestoreService {
         'longitude': longitude,
         'latitude': latitude,
         'imageUrl': imageUrl,
-        'stage': stage ?? 'No data yet',
+        'stage': stage ?? 'Not Classified',
         'stageImageUrl': stageImageUrl,
         'timestamp': Timestamp.now(),
         'isArchived': false,
@@ -106,7 +106,12 @@ class FirestoreService {
   Stream<List<Map<String, dynamic>>> getAllMangoTrees() async* {
     String username = FirebaseAuth.instance.currentUser?.displayName ?? 'Guest';
 
-    yield* mango_tree.where('uploader', isEqualTo: username).snapshots().map(
+    yield* mango_tree
+        .where('uploader', isEqualTo: username)
+        .where('isArchived', isEqualTo: false)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map(
       (querySnapshot) {
         return querySnapshot.docs.map((doc) {
           return {
