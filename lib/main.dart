@@ -118,7 +118,7 @@ void _showUpdateDialog() {
               Uri uri = Uri.parse(updateUrl);
 
               if (await canLaunchUrl(uri)) {
-                await launchUrl(uri);
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

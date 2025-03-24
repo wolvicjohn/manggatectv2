@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:manggatectv2/pages/displaytreepage/displaytree.dart';
 import 'package:manggatectv2/services/button_design.dart';
 import 'package:manggatectv2/utility/custom_page_transition.dart';
 import 'package:manggatectv2/utility/notificationservice.dart';
@@ -8,7 +9,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
 import '../../services/app_designs.dart';
 import '../../services/firestore.dart';
-import '../home_page.dart';
+
 
 class ResultPage extends StatefulWidget {
   final File stageImage;
@@ -257,17 +258,17 @@ class _ResultPageState extends State<ResultPage> {
       await NotificationService.showNotification(
         id: 0,
         title: 'Save Successful',
-        body: 'The stage has been saved successfully!',
+        body: 'The tree has been saved successfully!',
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Stage saved successfully!')),
+        const SnackBar(content: Text('Tree saved successfully!')),
       );
 
       // Pop the current screen and replace with Homepage
       Navigator.pushReplacement(
         context,
-        CustomPageTransition(page: Homepage(username: widget.username)),
+        CustomPageTransition(page: LatestMangoTreeDisplay(username: widget.username,)),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
