@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 class AppDesigns {
   // Common Colors
@@ -8,10 +9,26 @@ class AppDesigns {
 
   // Animated Loading Surge Widget
   static Widget loadingIndicator() {
-    return const Center(
-      child: SpinKitWaveSpinner(
-        color: primaryColor,
-        size: 50,
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: LoadingIndicator(
+          indicatorType: Indicator.lineScalePulseOutRapid,
+          colors: [
+            AppDesigns.primaryColor,
+            Colors.red,
+            Colors.orange,
+            Colors.blue,
+            Colors.yellow
+          ],
+          strokeWidth: 2,
+        ),
       ),
     );
   }
@@ -47,6 +64,10 @@ class AppDesigns {
   static const TextStyle labelTextStyle = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.bold,
+    color: Colors.black,
+  );
+  static const TextStyle dataTextStyle = TextStyle(
+    fontSize: 12,
     color: Colors.black,
   );
 

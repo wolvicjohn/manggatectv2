@@ -9,6 +9,7 @@ class FirestoreService {
   final CollectionReference mango_tree =
       FirebaseFirestore.instance.collection('mango_tree');
   final FirebaseStorage storage = FirebaseStorage.instance;
+  
 
   // Create a mango_tree
   Future<String> addmango_tree({

@@ -10,7 +10,6 @@ import 'package:image/image.dart' as img;
 import '../../services/app_designs.dart';
 import '../../services/firestore.dart';
 
-
 class ResultPage extends StatefulWidget {
   final File stageImage;
   final File image;
@@ -268,7 +267,10 @@ class _ResultPageState extends State<ResultPage> {
       // Pop the current screen and replace with Homepage
       Navigator.pushReplacement(
         context,
-        CustomPageTransition(page: LatestMangoTreeDisplay(username: widget.username,)),
+        CustomPageTransition(
+            page: LatestMangoTreeDisplay(
+          username: widget.username,
+        )),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -325,7 +327,7 @@ class _ResultPageState extends State<ResultPage> {
           ),
         ),
         const SizedBox(height: 20),
-        const CircularProgressIndicator(),
+        AppDesigns.loadingIndicator(),
       ],
     );
   }

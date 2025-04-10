@@ -49,7 +49,7 @@ class AllTreeLocationPageState extends State<AllTreeLocationPage> {
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        return Center(child: AppDesigns.loadingIndicator());
                       }
 
                       if (snapshot.hasError) {
@@ -93,10 +93,10 @@ class AllTreeLocationPageState extends State<AllTreeLocationPage> {
                         ),
                         children: [
                           TileLayer(
-                                urlTemplate:
+                            urlTemplate:
                                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                userAgentPackageName: 'com.example.app',
-                              ),
+                            userAgentPackageName: 'com.example.app',
+                          ),
                           MarkerLayer(
                             markers: locations.map((location) {
                               // Find the corresponding document to get its 'stage'

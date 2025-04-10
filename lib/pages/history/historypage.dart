@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manggatectv2/services/app_designs.dart';
 import '../../services/firestore.dart';
+import 'treedetails.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
+  final String username;
+  const HistoryPage({Key? key, required this.username}) : super(key: key);
 
   @override
   _HistoryPageState createState() => _HistoryPageState();
@@ -60,7 +62,7 @@ class _HistoryPageState extends State<HistoryPage>
             );
           }
 
-          _controller.forward(); // Start the animation when data is loaded
+          _controller.forward();
 
           return ListView.builder(
             itemCount: data.length,
@@ -76,30 +78,42 @@ class _HistoryPageState extends State<HistoryPage>
                 controller: _controller,
                 index: index,
                 totalItems: data.length,
-                child: Card(
-                  margin: const EdgeInsets.fromLTRB(12, 2.5, 12, 2.5),
-                  elevation: 6.0,
-                  color: AppDesigns.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  shadowColor: Colors.black.withOpacity(0.2),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(10.0),
-                    leading: item['stageImageUrl'] != null
-                        ? Image.network(item['stageImageUrl'],
-                            width: 50, height: 50, fit: BoxFit.cover)
-                        : const Icon(Icons.image_not_supported),
-                    title: Text(
-                      '${item['stage'] ?? 'Unknown'}',
-                      style: AppDesigns.titleTextStyle,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            StageDetailsPage(docId: item['id'], username: widget.username,),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Card(
+                    margin: const EdgeInsets.fromLTRB(12, 2.5, 12, 2.5),
+                    elevation: 6.0,
+                    color: AppDesigns.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
                     ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Uploaded on: $formattedDate',
-                            style: AppDesigns.bodyText),
-                      ],
+                    shadowColor: Colors.black.withOpacity(0.2),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(10.0),
+                      leading: item['stageImageUrl'] != null
+                          ? Image.network(item['stageImageUrl'],
+                              width: 50, height: 50, fit: BoxFit.cover)
+                          : const Icon(Icons.image_not_supported),
+                      title: Text(
+                        '${item['stage'] ?? 'Unknown'}',
+                        style: AppDesigns.titleTextStyle,
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Uploaded on: $formattedDate',
+                              style: AppDesigns.bodyText),
+                        ],
+                      ),
                     ),
                   ),
                 ),

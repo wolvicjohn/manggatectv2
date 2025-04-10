@@ -258,11 +258,7 @@ class _ClassifyPageState extends State<ClassifyPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppDesigns.primaryColor,
-                            ),
-                          ),
+                          AppDesigns.loadingIndicator(),
                           SizedBox(height: 16),
                           Text(
                             'Processing...',

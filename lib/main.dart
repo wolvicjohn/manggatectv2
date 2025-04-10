@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,10 @@ void main() async {
   await NotificationService.initialize();
   await checkForUpdate();
   await Future.delayed(const Duration(seconds: 1));
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+  );
+
   FlutterNativeSplash.remove();
   runApp(const MyApp());
 }

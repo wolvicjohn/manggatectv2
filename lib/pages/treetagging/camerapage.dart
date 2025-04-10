@@ -63,7 +63,7 @@ class _ImagePickerPageState extends State<ImagePickerPage> {
     return Scaffold(
       body: Center(
         child: AppDesigns
-            .loadingIndicator(), // Show a loading indicator while the camera is being triggered
+            .loadingIndicator(), 
       ),
     );
   }

@@ -26,7 +26,7 @@ class LatestMangoTreeDisplay extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: AppDesigns.loadingIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
@@ -63,16 +63,6 @@ class LatestMangoTreeDisplay extends StatelessWidget {
                               child: Image.network(data['imageUrl'],
                                   height: 300, fit: BoxFit.cover),
                             ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              const Icon(Icons.eco, color: Colors.orange),
-                              const SizedBox(width: 8),
-                              Text(
-                                  'Stage: ${data['stage'] ?? 'Not Classified'}',
-                                  style: const TextStyle(fontSize: 16)),
-                            ],
-                          ),
                         ],
                       ),
                     ),

@@ -12,7 +12,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class Homepage extends StatefulWidget {
   final String username;
   Homepage({required this.username});
@@ -225,12 +224,7 @@ class _HomepageState extends State<Homepage> {
                               SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppDesigns.primaryColor,
-                                  ),
-                                ),
+                                child: AppDesigns.loadingIndicator()
                               ),
                           ],
                         ),
@@ -268,7 +262,10 @@ class _HomepageState extends State<Homepage> {
                       delay: 600,
                       onTap: () => Navigator.push(
                         context,
-                        BottomSlidePageTransition(page: const HistoryPage()),
+                        BottomSlidePageTransition(
+                            page: HistoryPage(
+                          username: widget.username,
+                        )),
                       ),
                     ),
                     FeatureCard(

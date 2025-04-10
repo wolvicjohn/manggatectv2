@@ -87,9 +87,7 @@ class _GoogleLoginPageState extends State<GoogleLoginPage> {
         child: SafeArea(
           child: Center(
             child: _isLoading
-                ? CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  )
+                ? AppDesigns.loadingIndicator()
                 : SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -178,7 +176,7 @@ class _GoogleLoginPageState extends State<GoogleLoginPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      'assets/google_logo.png', // Add Google logo to assets
+                                      'assets/google_logo.png', 
                                       height: 24,
                                     ),
                                     SizedBox(width: 12),
