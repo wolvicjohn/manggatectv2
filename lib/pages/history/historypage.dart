@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manggatectv2/services/app_designs.dart';
@@ -68,6 +69,7 @@ class _HistoryPageState extends State<HistoryPage>
             itemCount: data.length,
             itemBuilder: (context, index) {
               final item = data[index];
+              final imageUrl = item['stageImageUrl'];
               final timestamp = item['timestamp'];
               final formattedDate = timestamp != null
                   ? DateFormat('EEEE, MMM d, yyyy h:mm a')
@@ -83,8 +85,10 @@ class _HistoryPageState extends State<HistoryPage>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            StageDetailsPage(docId: item['id'], username: widget.username,),
+                        builder: (context) => StageDetailsPage(
+                          docId: item['id'],
+                          username: widget.username,
+                        ),
                       ),
                     );
                   },
@@ -100,8 +104,51 @@ class _HistoryPageState extends State<HistoryPage>
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(10.0),
                       leading: item['stageImageUrl'] != null
-                          ? Image.network(item['stageImageUrl'],
-                              width: 50, height: 50, fit: BoxFit.cover)
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: item['imageUrl'] != null
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: CachedNetworkImage(
+                                          imageUrl: imageUrl!,
+                                          width: 70,
+                                          height: 70,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                                  width: 100,
+                                                  height: 100,
+                                                  padding:
+                                                      const EdgeInsets.all(20),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  child: AppDesigns
+                                                      .loadingIndicator()),
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                                width: 60,
+                                                height: 60,
+                                                color: Colors.grey.shade200,
+                                                child: const Icon(
+                                                    Icons.error_outline),
+                                              )),
+                                    )
+                                  : Container(
+                                      width: 60,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade200,
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      child: const Icon(
+                                          Icons.image_not_supported_outlined),
+                                    ),
+                            )
                           : const Icon(Icons.image_not_supported),
                       title: Text(
                         '${item['stage'] ?? 'Unknown'}',

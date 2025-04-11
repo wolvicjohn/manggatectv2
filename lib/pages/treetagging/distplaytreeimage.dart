@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:manggatectv2/pages/home_page.dart';
 import 'package:manggatectv2/pages/treetagging/image_pick.dart';
@@ -8,6 +7,7 @@ import 'package:manggatectv2/utility/custom_page_transition.dart';
 import 'dart:io';
 import '../../services/app_designs.dart';
 import '../../services/firestore.dart';
+import 'package:image/image.dart' as img;
 
 class DisplayOutputPage extends StatefulWidget {
   final File image;
@@ -26,7 +26,19 @@ class DisplayOutputPage extends StatefulWidget {
 }
 
 class _DisplayOutputPageState extends State<DisplayOutputPage> {
-  bool _isLoading = false; // Track loading state
+  bool _isLoading = false;
+
+  File _resizeImageFile(File originalFile) {
+    final originalImage = img.decodeImage(originalFile.readAsBytesSync())!;
+    final resizedImage = img.copyResize(originalImage, width: 224, height: 224);
+    final resizedBytes = img.encodeJpg(resizedImage);
+
+    final resizedFile = File(
+        '${originalFile.parent.path}/resized_${originalFile.uri.pathSegments.last}');
+    resizedFile.writeAsBytesSync(resizedBytes);
+
+    return resizedFile;
+  }
 
   // Function to parse location
   List<String> parseLocation() {
@@ -40,98 +52,100 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
     String longitude = latLon[1];
 
     FirestoreService firestoreService = FirestoreService();
+    bool classifyChecked = false;
 
     try {
       setState(() {
-        _isLoading = true; // Show loading indicator while saving
+        _isLoading = true;
       });
 
-      // Show save confirmation dialog
-      bool? saveNow = await showDialog<bool>(
+      // Show custom dialog with checkbox
+      bool? saveConfirmed = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
-          return AppDesigns.customDialog(
-            context: context,
-            title: 'Do you want to save this?',
-            content: '',
-            onYes: () => Navigator.of(context).pop(true),
-            onNo: () => Navigator.of(context).pop(false),
-          );
-        },
-      );
-
-      if (saveNow == false) {
-        return;
-      }
-
-      // Ask user if they want to classify the tree now
-      bool? classifyNow = await showDialog<bool>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: AppDesigns.backgroundColor,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Do you want to classify this tree now?\n',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                backgroundColor: AppDesigns.backgroundColor,
+                title: const Text(
+                  'Do you want to save this tree?',
+                  style: TextStyle(color: Colors.black, fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(
-                  'No',
-                  style: AppDesigns.labelTextStyle,
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CheckboxListTile(
+                      value: classifyChecked,
+                      onChanged: (value) {
+                        setState(() {
+                          classifyChecked = value ?? false;
+                        });
+                      },
+                      title: const Text(
+                        'Do you want to classify this tree?',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                      activeColor: Color.fromARGB(
+                          255, 20, 116, 82),
+                      checkColor: Colors.white,
+                    ),
+                  ],
                 ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(
-                  'Yes',
-                  style: AppDesigns.labelTextStyle,
-                ),
-              ),
-            ],
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text('No', style: AppDesigns.labelTextStyle),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: Text('Yes', style: AppDesigns.labelTextStyle),
+                  ),
+                ],
+              );
+            },
           );
         },
       );
 
-      // If user confirms to classify, navigate to ClassifyPage
-      if (classifyNow == true) {
-        Navigator.push(
-          context,
-          CustomPageTransition(
-            page: ClassifyPage(
-              latitude: latitude,
-              longitude: longitude,
-              image: widget.image,
-              username: widget.username,
+      if (saveConfirmed == true) {
+        if (classifyChecked) {
+          // Redirect to classify without saving
+          Navigator.push(
+            context,
+            CustomPageTransition(
+              page: ClassifyPage(
+                latitude: latitude,
+                longitude: longitude,
+                image: widget.image,
+                username: widget.username,
+              ),
             ),
-          ),
-        );
-      } else if (classifyNow == false) {
-        // Save the mango_tree with image and location to Firestore
-        await firestoreService.addmango_tree(
-          longitude: longitude,
-          latitude: latitude,
-          image: widget.image,
-          stageImage: null,
-          isArchived: false,
-          uploader: widget.username,
-        );
+          );
+        } else {
+          // Resize and save to Firestore
+          File resizedImageFile = _resizeImageFile(widget.image);
 
-        // Show a success message if saved
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tree saved successfully!')),
-        );
-        Navigator.pushReplacement(
-          context,
-          CustomPageTransition(page: Homepage(username: widget.username)),
-        );
+          await firestoreService.addmango_tree(
+            longitude: longitude,
+            latitude: latitude,
+            image: resizedImageFile,
+            stageImage: null,
+            isArchived: false,
+            uploader: widget.username,
+          );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Tree saved successfully!')),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            CustomPageTransition(page: Homepage(username: widget.username)),
+          );
+        }
       }
     } catch (e) {
       log('Error saving mango_tree: $e');
@@ -140,7 +154,7 @@ class _DisplayOutputPageState extends State<DisplayOutputPage> {
       );
     } finally {
       setState(() {
-        _isLoading = false; // Hide loading indicator after completion
+        _isLoading = false;
       });
     }
   }

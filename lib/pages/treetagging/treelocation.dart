@@ -92,31 +92,21 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/traveler.png',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.cover,
-                ),
-                const SizedBox(height: 30),
-                const Text(
-                  'Get close to the tree you want to tag.\nThen, adjust the marker if needed.',
-                  style: AppDesigns.labelTextStyle,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                if (_isLoading)
-                  AppDesigns.loadingIndicator()
-                else
-                  FeatureCard(
-                    title: "Get Location",
-                    icon: Icons.location_pin,
-                    color: Colors.red,
-                    delay: 0,
-                    onTap: _getCurrentLocation,
+                // Swap image + text with map + location once fetched
+                if (!_isLocationFetched) ...[
+                  Image.asset(
+                    'assets/traveler.png',
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.cover,
                   ),
-                const SizedBox(height: 20),
-                if (_isLocationFetched) ...[
+                  const SizedBox(height: 30),
+                  const Text(
+                    'Get close to the tree you want to tag.\nThen, adjust the marker if needed.',
+                    style: AppDesigns.labelTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                ] else ...[
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16.0),
@@ -132,11 +122,10 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
                       ],
                     ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: 250, // Increased map size
+                          height: 250,
                           child: FlutterMap(
                             options: MapOptions(
                               initialCenter: _markerPosition!,
@@ -163,7 +152,6 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
                                     height: 50.0,
                                     child: GestureDetector(
                                       onPanUpdate: (details) {
-                                        // Allow dragging the marker
                                         setState(() {
                                           _markerPosition = LatLng(
                                             _markerPosition!.latitude +
@@ -198,13 +186,6 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
-                        Divider(
-                          color: AppDesigns.primaryColor.withOpacity(0.5),
-                          thickness: 1,
-                          indent: 20,
-                          endIndent: 20,
-                        ),
-                        const SizedBox(height: 20),
                         FeatureCard(
                           title: "Continue",
                           icon: Icons.arrow_forward,
@@ -227,6 +208,20 @@ class _TreeLocationPageState extends State<TreeLocationPage> {
                     ),
                   ),
                 ],
+
+                const SizedBox(height: 20),
+
+                // Always show this — stays even after location is fetched
+                if (_isLoading)
+                  AppDesigns.loadingIndicator()
+                else
+                  FeatureCard(
+                    title: "Get Location",
+                    icon: Icons.location_pin,
+                    color: Colors.red,
+                    delay: 0,
+                    onTap: _getCurrentLocation,
+                  ),
               ],
             ),
           ),
