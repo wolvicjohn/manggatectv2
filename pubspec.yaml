@@ -4,7 +4,7 @@ description: "A new Flutter project."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.2.3+1
+version: 1.2.4+1
 
 environment:
   sdk: ">=3.2.3 <4.0.0"
@@ -51,6 +51,7 @@ dependencies:
   firebase_remote_config: ^5.4.2
   package_info_plus: ^8.3.0
   loading_indicator: ^3.1.1
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
