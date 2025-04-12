@@ -199,32 +199,37 @@ class _HomepageState extends State<Homepage> {
                               child: Icon(Icons.person, color: Colors.white),
                             ),
                             SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Welcome back,',
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 14,
+                            Expanded(
+                              // prevents overflow
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Welcome back,',
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  widget.username,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
+                                  Text(
+                                    widget.username,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                            Spacer(),
+                            SizedBox(width: 12),
                             if (_isLoading)
                               SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: AppDesigns.loadingIndicator()
+                                child: AppDesigns.loadingIndicator(),
                               ),
                           ],
                         ),

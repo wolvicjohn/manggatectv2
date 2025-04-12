@@ -58,7 +58,10 @@ class _QRScannerPageState extends State<QRScannerPage> {
         Navigator.pushReplacement(
           context,
           CustomPageTransition(
-            page: QRResultPage(qrResult: scanData.code!, username: widget.username,),
+            page: QRResultPage(
+              qrResult: scanData.code!,
+              username: widget.username,
+            ),
           ),
         );
       }
@@ -71,9 +74,25 @@ class _QRScannerPageState extends State<QRScannerPage> {
       appBar: AppBar(
         title: const Text('QR Code Scanner'),
       ),
-      body: QRView(
-        key: qrKey,
-        onQRViewCreated: _onQRViewCreated,
+      body: Stack(
+        children: [
+          QRView(
+            key: qrKey,
+            onQRViewCreated: _onQRViewCreated,
+          ),
+          Positioned.fill(
+            child: Center(
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.greenAccent, width: 3),
+                  color: Colors.transparent,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

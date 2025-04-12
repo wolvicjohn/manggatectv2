@@ -1,0 +1,2 @@
+D:/flutter_projects/final capstone folder/manggatectv2/android/app/.cxx/Debug/3y3ti161/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/flutter_projects/final capstone folder/manggatectv2/android/app/.cxx/Debug/3y3ti161/armeabi-v7a/CMakeFiles/rebuild_cache.dir
