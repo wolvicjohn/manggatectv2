@@ -6,7 +6,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:manggatectv2/firebase_options.dart';
 import 'package:manggatectv2/pages/login/GoogleSignIn.dart';
 import 'package:manggatectv2/services/app_designs.dart';
-import 'package:manggatectv2/utility/notificationservice.dart';
+import 'package:manggatectv2/utils/notificationservice.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,7 +42,7 @@ Future<void> checkForUpdate() async {
     // Set default values
     await remoteConfig.setDefaults({'latest_version': '1.0.0'});
 
-    // Fetch and activate remote configrR
+    // Fetch and activate remote config
     await remoteConfig.fetchAndActivate();
 
     // Get latest version from Remote Config

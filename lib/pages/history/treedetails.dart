@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:manggatectv2/services/app_designs.dart';
 
-import '../../utility/custom_page_transition.dart';
-import '../qrscanning/image_pick.dart';
+import '../../utils/custom_page_transition.dart';
+import '../qr_code_scanning/image_pick.dart';
 
 class StageDetailsPage extends StatefulWidget {
   final String docId;
@@ -70,17 +69,27 @@ class _StageDetailsPageState extends State<StageDetailsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (data!['stageImageUrl'] != null)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(data!['stageImageUrl']),
+                              Center(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(data!['stageImageUrl'],
+                                      fit: BoxFit.cover,
+                                      height: 200,
+                                      width: 200),
+                                ),
                               )
                             else
                               const Text("No image available."),
                             const SizedBox(height: 20),
                             if (data!['imageUrl'] != null)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(data!['imageUrl']),
+                              Center(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(data!['imageUrl'],
+                                      fit: BoxFit.cover,
+                                      height: 200,
+                                      width: 200),
+                                ),
                               )
                             else
                               const Text("No image available."),
@@ -163,6 +172,7 @@ class _StageDetailsPageState extends State<StageDetailsPage> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 100),
                           ],
                         ),
                       ),
