@@ -90,22 +90,21 @@ class AppDesigns {
     fontSize: 14,
     color: Colors.black,
   );
-
-  // Reusable Button Widget
+ 
   static Widget customButton({
     required String title,
     required VoidCallback onPressed,
-    bool isLoading = false, // Add this parameter
+    bool isLoading = false, 
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: InkWell(
         onTap: isLoading ? null : onPressed,
-        splashColor: primaryColor.withOpacity(0.5), // Add splash effect
-        highlightColor: primaryColor.withOpacity(0.3), // Add highlight effect
+        splashColor: primaryColor.withOpacity(0.5),
+        highlightColor: primaryColor.withOpacity(0.3),
         child: AnimatedScale(
-          duration: const Duration(milliseconds: 100), // Animation duration
-          scale: isLoading ? 1.0 : 0.95, // Scale down on press
+          duration: const Duration(milliseconds: 100), 
+          scale: isLoading ? 1.0 : 0.95, 
           child: ElevatedButton(
             onPressed: isLoading ? null : onPressed,
             style: ElevatedButton.styleFrom(
@@ -116,7 +115,7 @@ class AppDesigns {
               width: double.infinity,
               child: Center(
                 child: isLoading
-                    ? loadingIndicator() // Show loading indicator when loading
+                    ? loadingIndicator() 
                     : Text(title, style: buttonTextStyle),
               ),
             ),
@@ -187,14 +186,14 @@ class AppDesigns {
       opacity: CurvedAnimation(
         parent: controller,
         curve: Interval(
-          (index / totalItems) * 0.7, // Spread the animation for items
+          (index / totalItems) * 0.7, 
           1.0,
           curve: Curves.easeOut,
         ),
       ),
       child: SlideTransition(
         position: Tween<Offset>(
-          begin: Offset(0, 0.3 * (index + 1)), // Adjust starting offset
+          begin: Offset(0, 0.3 * (index + 1)), 
           end: Offset.zero,
         ).animate(
           CurvedAnimation(

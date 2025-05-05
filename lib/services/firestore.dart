@@ -3,13 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
-// import 'package:manggatectv2/utility/DeviceIdentifier.dart';
-
 class FirestoreService {
   final CollectionReference mango_tree =
       FirebaseFirestore.instance.collection('mango_tree');
   final FirebaseStorage storage = FirebaseStorage.instance;
-  
 
   // Create a mango_tree
   Future<String> addmango_tree({
@@ -24,8 +21,6 @@ class FirestoreService {
     try {
       print(
           'Attempting to save mango_tree with Longitude: $longitude, Latitude: $latitude');
-
-      // String deviceId = await DeviceIdentifier.getDeviceId();
 
       // Upload main image to Firebase Storage
       String imageUrl = await uploadImage(image);
@@ -45,7 +40,6 @@ class FirestoreService {
         'stageImageUrl': stageImageUrl,
         'timestamp': Timestamp.now(),
         'isArchived': false,
-        // 'deviceId': deviceId,
         'uploader': uploader,
       });
 
@@ -78,9 +72,10 @@ class FirestoreService {
       // Move the current data to the `history` sub-collection
       Map<String, dynamic> currentData =
           currentDoc.data() as Map<String, dynamic>;
+
       await docRef.collection('history').add({
-        ...currentData, // Add all fields from the current document
-        'moved_at': Timestamp.now(), // Add a timestamp for when it was moved
+        ...currentData,
+        'moved_at': Timestamp.now(),
       });
 
       // Upload new stage image if provided

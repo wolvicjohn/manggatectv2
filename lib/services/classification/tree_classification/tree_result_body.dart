@@ -60,7 +60,7 @@ class ResultBody extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          "Care Recommendations",
+          "Recommendations",
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,
               ),

@@ -5,6 +5,7 @@ import 'package:manggatectv2/utils/custom_page_transition.dart';
 import 'package:manggatectv2/utils/notificationservice.dart';
 import '../../../../pages/display_tree_page/displaytree.dart';
 import '../../../../pages/homepage/home_page.dart';
+import '../../../app_designs.dart';
 import '../../helper/result_helpers.dart';
 import '../../helper/widgets/result_classifier.dart';
 import '../../helper/widgets/result_dialogs.dart';
@@ -109,11 +110,11 @@ class ResultController {
   }
 
   Widget buildSavingView() {
-    return const Center(
+    return  Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
+          AppDesigns.loadingIndicator(),
           SizedBox(height: 16),
           Text("Saving your results...",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
@@ -125,11 +126,11 @@ class ResultController {
   Widget buildLoadingView(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.7,
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
+            AppDesigns.loadingIndicator(),
             SizedBox(height: 24),
             Text("Classifying your plant..."),
             SizedBox(height: 12),
