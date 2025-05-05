@@ -135,7 +135,7 @@ class AllTreeLocationPageState extends State<AllTreeLocationPage> {
                                   iconPath = 'assets/stage3_icon.png';
                                   break;
                                 default:
-                                  iconPath = 'assets/mango.png';
+                                  iconPath = 'assets/no_flower.png';
                               }
 
                               return Marker(

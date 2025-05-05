@@ -4,7 +4,7 @@ description: "A new Flutter project."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.2.8+1
+version: 1.2.9+1
 
 environment:
   sdk: ">=3.2.3 <4.0.0"
@@ -99,6 +99,7 @@ flutter:
     - assets/stage2_icon.png
     - assets/stage3_icon.png
     - assets/google_logo.png
+    - assets/no_flower.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -18,21 +18,23 @@ class GoogleLoginController extends ChangeNotifier {
     try {
       setLoading(true);
 
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      // Force the account chooser by ending any existing session:
+      await _googleSignIn.signOut(); // or: await _googleSignIn.disconnect();
+
+      // Now show the chooser UI for the user to pick an account:
+      final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         _showSnackBar(context, 'Sign-in cancelled by user');
         return null;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final OAuthCredential credential = GoogleAuthProvider.credential(
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      final userCredential = await _auth.signInWithCredential(credential);
       return userCredential.user;
     } catch (e) {
       _showSnackBar(context, 'Failed to sign in: ${e.toString()}');
