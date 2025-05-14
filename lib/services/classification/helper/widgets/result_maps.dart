@@ -27,9 +27,9 @@ const fertilizationAdvice = {
   'stage-1':
       'Spray 1–3% potassium nitrate (KNO₃) to induce and synchronize bud break.',
   'stage-2':
-      'Switch to balanced NPK (e.g., 14-14-14) and avoid high-N formulations.',
+      'maintain Insectides and fungicides but this time we will add liquid fertilizer which is the foliar fertilizer.',
   'stage-3':
-      'Apply foliar zinc and boron (0.5 g/L each) at full bloom to reduce flower drop.',
+      'full bloom (no spraying) to allow pollinators like bees.',
   'stage-4':
       'Side-dress with potassium-rich fertilizer (e.g., 8-3-9) to improve fruit size and sweetness. ',
 };
@@ -47,8 +47,10 @@ const pruningAdvice = {
 const pestControl = {
   'Invalid': 'Invalid Image, try again',
   'stage-1':
-      'Monitor aphids and scale; use botanical insecticides (neem) and ants-trail removal. ',
+      'Spraying insecticide to control insect populations by killing them or preventing them from causing harm and use fungicide to prevent disease',
   'stage-2':
-      'Scout for anthracnose and powdery mildew; apply biofungicides if needed before bloom. ',
-  'stage-3': 'Deploy methyl eugenol bait traps for fruit flies at full bloom. ',
+      'maintain Insectides and fungicides but this time we will add liquid fertilizer which is the foliar fertilizer.',
+  'stage-3': 'full bloom (no spraying) to allow pollinators like bees.',
+  'stage-4':
+      'Maintain Spraying Insecticides, fungicides, foliar fertilizers.',
 };
